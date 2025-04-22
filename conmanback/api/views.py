@@ -36,6 +36,7 @@ class UtilisateurView(APIView):
     """
     ViewSet pour le modèle Utilisateur
     """
+    permission_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
     
     #serializer_class = UtilisateurSerializer 
     def get(self, request, pk=None):
