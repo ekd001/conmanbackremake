@@ -175,3 +175,16 @@ class Matiere(models.Model):
     def __str__(self):
         return f"{self.libelle}"
     
+
+class Note(models.Model):
+    """
+    modèle représentant une matière
+    """
+    id_note = models.AutoField(primary_key=True)
+    matiere = models.ForeignKey(Matiere,on_delete=models.SET_NULL,null=True, related_name="Note")
+    note = models.DecimalField(max_digits=4, decimal_places=2)
+    est_preselection = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"ID MAtiere -> {self.id_matiere} Note -> {self.note}"
+    

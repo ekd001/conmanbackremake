@@ -8,10 +8,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
-from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere
+from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
-    MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer
+    MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer
     )
 
 # Create your views here.
@@ -185,4 +185,12 @@ class MatiereViewSet(viewsets.ModelViewSet):
     """
     queryset = Matiere.objects.all()
     serializer_class = MatiereSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class NoteViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour le modèle Note
+    """
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
     permission_classes = [permissions.IsAuthenticated]
