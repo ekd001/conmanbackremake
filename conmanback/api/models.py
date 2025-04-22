@@ -163,3 +163,15 @@ class Diplome(models.Model):
     def __str__(self):
         return f"{self.libelle}"
     
+
+class Matiere(models.Model):
+    """
+    modèle représentant une matière
+    """
+    id_matiere = models.AutoField(primary_key=True)
+    libelle = models.CharField(max_length=100)
+    abreviation = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.libelle}"
+    
