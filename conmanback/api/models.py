@@ -43,18 +43,19 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
     """
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
-    email = models.CharField(max_length=100, unique=True)
+    email = models.CharField(max_length=100)
     telephone = models.CharField(max_length=100)
-    code_access = models.CharField(max_length=100)
-    password = models.CharField(max_length=255)
+    code_access = models.CharField(max_length=100,unique=True)
 
+
+    objects = UtilisateurManager()
+   
     profil = models.ForeignKey(Profil,on_delete=models.SET_NULL,null=True, related_name="Utilisateur")
 
     # Tous ce qui suit ne pas se préoccupée quelques configurations pour l'authentification
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = "code_access"
     REQUIRED_FIELDS = []
 
-    objects = UtilisateurManager()
 
      # Ajouter des 'related_name' pour éviter les conflits avec le modèle User
     groups = models.ManyToManyField(

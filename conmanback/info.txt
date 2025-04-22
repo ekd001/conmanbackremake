@@ -17,3 +17,7 @@ Pays
   "password": "password123"
   "profil_id": 2
 }
+
+{
+  "new_password": "password123"
+}

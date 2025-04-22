@@ -2,8 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
-    ProfilViewSet,UtilisateurViewSet,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
-    CustomTokenObtainPairView
+    ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
+    CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView
 )
 
 """
@@ -19,7 +19,6 @@ les routes que DefaultRouter() génère :
 router = DefaultRouter() # Générateur des routes API
 
 router.register(r'profil', ProfilViewSet) # créer les routes CRUD
-router.register(r'utilisateur', UtilisateurViewSet) 
 router.register(r'concours', ConcoursViewSet) 
 router.register(r'infos-generales', InfosGeneralesViewSet)
 router.register(r'serie', SerieViewSet)
@@ -29,6 +28,10 @@ router.register(r'diplome', DiplomeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('utilisateur/', UtilisateurView.as_view()), # créer 
+    path('utilisateur/<int:pk>/', UtilisateurView.as_view()), # récupérer un utilisateur, supprimer ou mettre à jour un utilisateur
     path('login/', CustomTokenObtainPairView.as_view(), name="login"),
-    path('token/refresh/',TokenRefreshView.as_view(),name="token-refresh")
+    path('changer-mot-de-passe/<int:pk>/', ChangerMotDePasseView.as_view(), name="changer-mot-de-passe"),
+    path('token/refresh/',TokenRefreshView.as_view(),name="token-refresh"),
+    path('logout/', LogoutView.as_view(), name="logout")
 ]

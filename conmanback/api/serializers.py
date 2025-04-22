@@ -6,14 +6,14 @@ from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mentio
 class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         # Récupère l'email et le mot de passe
-        email = attrs.get("email")
+        code_access = attrs.get("code_access")
         password = attrs.get("password")
 
         # Cherche l'utilisateur par email
-        user = self.user_model.objects.filter(email=email).first()
+        user = self.user_model.objects.filter(code_access=code_access).first()
 
         if not user or not user.check_password(password) or not user.is_active:
-            raise AuthenticationFailed("Email ou mot de passe invalide.")
+            raise AuthenticationFailed("Code access ou mot de passe invalide.")
 
         # Génère et retourne les tokens avec les informations de l'utilisateur
         refresh = self.get_token(user)
@@ -46,9 +46,16 @@ class UtilisateurSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilisateur
         fields = '__all__'  # tserialize all the field
-        extra_kwargs = {
-            'password': {'write_only':True}
+        extra_kwargs = {'password': {'write_only': True}
         }
+    
+    def create(self, validated_data):
+        """
+        Override la méthode create pour hasher le mot de passe avant de sauvegarder l'utilisateur
+        """
+        user = Utilisateur.objects.create_user(**validated_data)
+        return user
+       
 
 class ConcoursSerializer(serializers.ModelSerializer):
     """
