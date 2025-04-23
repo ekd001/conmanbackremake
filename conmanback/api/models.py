@@ -83,7 +83,6 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
         Vérifie si l'utilisateur n'est pas un admin
         """
         return self.profil.nomProfil == Profil.UTILISATEUR 
-   
 
 class Concours(models.Model):
     """
@@ -95,7 +94,6 @@ class Concours(models.Model):
 
     def __str__(self):
         return f"Concours de l'année {self.annee_civile}"
-
 
 class InfosGenerales(models.Model):
     """
@@ -261,3 +259,14 @@ class Candidat(Eleve):
 
     def __str__(self):
         return f"Candidat : {self.num_table}, {self.nom}"
+
+class Parametre(models.Model):
+    """
+    modèle représentant un Parametre
+    """
+    id_parametre = models.AutoField(primary_key=True)
+    duree_max_oisivete = models.IntegerField()
+    bonus_annee_bac = models.IntegerField()
+
+    def __str__(self):
+        return f"Oisivete : {self.duree_max_oisivete}, Bonus Annee Bac : {self.bonus_annee_bac}"
