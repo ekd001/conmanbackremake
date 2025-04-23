@@ -270,3 +270,25 @@ class Parametre(models.Model):
 
     def __str__(self):
         return f"Oisivete : {self.duree_max_oisivete}, Bonus Annee Bac : {self.bonus_annee_bac}"
+
+class Jury(models.Model):
+    """
+    modèle représentant un Jury
+    """
+    id_jury = models.AutoField(primary_key=True)
+    libelle = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"Jury : {self.libelle}"
+
+class MembreJury(models.Model):
+    """
+    modèle représentant un membre de Jury
+    """
+    id_membre = models.AutoField(primary_key=True)
+    jury = models.ForeignKey(Jury, on_delete=models.SET_NULL, null=True, related_name="MembreJury")  # One-to-Many relation
+    nom = models.CharField(max_length=100)
+    prenom = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"Membre Jury : {self.nom}, {self.prenom}"

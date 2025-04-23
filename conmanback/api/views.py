@@ -8,12 +8,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
-from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Candidat, Parametre
+from .models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
+    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury
+)
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
-    DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer, CandidatSerializer, ParametreSerializer
-    )
+    DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer, CandidatSerializer, ParametreSerializer, JurySerializer,
+    MembreJurySerializer
+)
 
 # Create your views here.
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -242,4 +245,20 @@ class ParametreViewSet(viewsets.ModelViewSet):
     """
     queryset = Parametre.objects.all()
     serializer_class = ParametreSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class JuryViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour le modèle Jury
+    """
+    queryset = Jury.objects.all()
+    serializer_class = JurySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class MembreJuryViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour le modèle MembreJury
+    """
+    queryset = MembreJury.objects.all()
+    serializer_class = MembreJurySerializer
     permission_classes = [permissions.IsAuthenticated]
