@@ -148,6 +148,8 @@ class Pays(models.Model):
     id_pays = models.AutoField(primary_key=True)
     nom_pays = models.CharField(max_length=100)
     code_pays = models.CharField(max_length=3)
+    nationalite = models.CharField(max_length=100, null=True)
+    indicatif = models.CharField(max_length=5, null=True)
 
     def __str__(self):
         return f"{self.libelle}"
@@ -225,3 +227,27 @@ class DiplomeObtenu(models.Model):
 
     def __str__(self):
         return f"DiplomeObtenu ID: {self.id_diplome_obtenu}, Année: {self.annee}"
+
+class Eleve(models.Model):
+    """
+    modèle représentant un Eleve
+    """
+    SEXE_CHOICES = [
+        ('M', 'Masculin'),
+        ('F', 'Feminin'),
+    ]
+
+    id_eleve = models.AutoField(primary_key=True)
+    dossier = models.ForeignKey(Dossier, on_delete=models.SET_NULL, null=True, related_name="Eleve")  # One-to-Many relation
+    nom = models.CharField(max_length=100)
+    prenom = models.CharField(max_length=100)
+    sexe = models.CharField(max_length=1, choices=SEXE_CHOICES)  # Enumération pour le sexe
+    date_naissance = models.DateField()
+    lieu_naissance = models.CharField(max_length=100)
+    pays_naissance = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, related_name="Eleve")
+    telephone = models.CharField(max_length=20)
+    email = models.EmailField()
+    addresse = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"Eleve : {self.nom}, {self.prenom}"
