@@ -8,11 +8,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
-from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve
+from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Candidat
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
-    DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer
+    DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer, CandidatSerializer
     )
 
 # Create your views here.
@@ -226,4 +226,12 @@ class EleveViewSet(viewsets.ModelViewSet):
     """
     queryset = Eleve.objects.all()
     serializer_class = EleveSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class CandidatViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour le modèle Candidat
+    """
+    queryset = Candidat.objects.all()
+    serializer_class = CandidatSerializer
     permission_classes = [permissions.IsAuthenticated]

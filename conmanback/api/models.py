@@ -251,3 +251,13 @@ class Eleve(models.Model):
 
     def __str__(self):
         return f"Eleve : {self.nom}, {self.prenom}"
+
+class Candidat(Eleve):
+    """
+    modèle représentant un Candidat
+    """
+    num_table = models.AutoField(primary_key=True)
+    notes = models.ManyToManyField(Note, related_name="Candidat")  # Many-to-Many relation
+
+    def __str__(self):
+        return f"Candidat : {self.num_table}, {self.nom}"

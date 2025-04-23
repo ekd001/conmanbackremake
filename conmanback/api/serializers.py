@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
-from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve  # Replace with your actual model name
+from .models import Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Candidat  # Replace with your actual model name
 
 class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -151,5 +151,13 @@ class EleveSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Eleve
+        fields = '__all__'  # serialize all the field
+                                        
+class CandidatSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour le modèle Candidat
+    """
+    class Meta:
+        model = Candidat
         fields = '__all__'  # serialize all the field
         
