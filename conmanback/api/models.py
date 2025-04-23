@@ -175,7 +175,6 @@ class Matiere(models.Model):
     def __str__(self):
         return f"{self.libelle}"
     
-
 class Note(models.Model):
     """
     modèle représentant une matière
@@ -186,5 +185,30 @@ class Note(models.Model):
     est_preselection = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"ID MAtiere -> {self.id_matiere} Note -> {self.note}"
-    
+        return f"ID MAtiere -> {self.matiere} Note -> {self.note}" 
+
+class DiplomeObtenu(models.Model):
+    """
+    modèle représentant un diplome obtenu par un Eleve
+    """
+    id_diplome_obtenu = models.AutoField(primary_key=True)
+    diplome = models.ForeignKey(Diplome, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
+    serie = models.ForeignKey(Serie, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
+    pays = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
+    mention = models.ForeignKey(Mention, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
+    notes = models.ManyToManyField(Note, related_name="DiplomesObtenus")  # Many-to-Many relation
+    annee = models.IntegerField()
+
+    def __str__(self):
+        return f"DiplomeObtenu ID: {self.id_diplome_obtenu}, Année: {self.annee}"
+
+class Specialite(models.Model):
+    """
+    modèle représentant une Spécialité 
+    """
+    id_specialite = models.AutoField(primary_key=True)
+    libelle = models.CharField(max_length=100)
+    abreviation = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"Diplome ID: {self.id_specialite}, libelle: {self.libelle}"
