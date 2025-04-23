@@ -9,13 +9,13 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
 from .models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
-    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury
+    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury, CoefficientMatierePhase
 )
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer, CandidatSerializer, ParametreSerializer, JurySerializer,
-    MembreJurySerializer
+    MembreJurySerializer, CoefficientMatierePhaseSerializer
 )
 
 # Create your views here.
@@ -261,4 +261,12 @@ class MembreJuryViewSet(viewsets.ModelViewSet):
     """
     queryset = MembreJury.objects.all()
     serializer_class = MembreJurySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class CoefficientMatierePhaseViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour le modèle CoefficientMatierePhase
+    """
+    queryset = CoefficientMatierePhase.objects.all()
+    serializer_class = CoefficientMatierePhaseSerializer
     permission_classes = [permissions.IsAuthenticated]

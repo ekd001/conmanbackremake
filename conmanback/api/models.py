@@ -292,3 +292,16 @@ class MembreJury(models.Model):
 
     def __str__(self):
         return f"Membre Jury : {self.nom}, {self.prenom}"
+
+class CoefficientMatierePhase(models.Model):
+    """
+    modèle représentant les informations concernant une matiere dans chaque phase
+    """
+    id_coeffmp = models.AutoField(primary_key=True) # coeffmp -> coeff = coefficient, m = matiere, p = phase
+    specialite = models.ForeignKey(Specialite, on_delete=models.SET_NULL, null=True, related_name="CoeffMP")  # One-to-Many relation
+    matiere = models.ForeignKey(Matiere, on_delete=models.SET_NULL, null=True, related_name="CoeffMP")  # One-to-Many relation
+    estPreselection = models.BooleanField()
+    coefficient = models.IntegerField()
+
+    def __str__(self):
+        return f"Coefficient Matiere Phase : {self.matiere}, {self.coefficient}. Preselection : {self.estPreselection}"

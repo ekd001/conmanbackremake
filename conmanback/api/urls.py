@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
     CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView, MatiereViewSet, NoteViewSet, DiplomeObtenuViewSet, SpecialiteViewSet,
-    DossierViewSet, EleveViewSet, CandidatViewSet, ParametreViewSet, JuryViewSet, MembreJuryViewSet
+    DossierViewSet, EleveViewSet, CandidatViewSet, ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet
 )
 
 """
@@ -36,6 +36,7 @@ router.register(r'candidat', CandidatViewSet)
 router.register(r'parametre', ParametreViewSet)
 router.register(r'jury', JuryViewSet)
 router.register(r'membre-jury', MembreJuryViewSet)
+router.register(r'coeff-matiere-phase', CoefficientMatierePhaseViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

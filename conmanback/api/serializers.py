@@ -2,7 +2,8 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from .models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, 
-    Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Candidat, Parametre, Jury, MembreJury
+    Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Candidat, Parametre, Jury, MembreJury,
+    CoefficientMatierePhase
 )  # Replace with your actual model name
 
 class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
@@ -185,5 +186,13 @@ class MembreJurySerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = MembreJury
+        fields = '__all__'  # serialize all the field
+                                                 
+class CoefficientMatierePhaseSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour le modèle CoefficientMatierePhase
+    """
+    class Meta:
+        model = CoefficientMatierePhase
         fields = '__all__'  # serialize all the field
         
