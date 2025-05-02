@@ -1,22 +1,21 @@
-from rest_framework.decorators import action
+
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
 from rest_framework import status, viewsets, permissions
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
-from .models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
-    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury, CoefficientMatierePhase
-)
+from .models import (Profil,Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
+    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury, CoefficientMatierePhase)
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer, CandidatSerializer, ParametreSerializer, JurySerializer,
     MembreJurySerializer, CoefficientMatierePhaseSerializer
-)
+    )
 
 # Create your views here.
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -26,6 +25,76 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     serializer_class = CustomTokenObtainPairViewSerializer
 
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+        data = serializer.validated_data
+        access = data.pop('access')
+        refresh = data.pop('refresh')
+
+        response = Response(data, status=status.HTTP_200_OK)
+
+        # Définir les cookies HttpOnly et sécurisés
+        response.set_cookie(
+            key='access_token',
+            value=access,
+            httponly=True,
+            secure=False,              # à activer en production (HTTPS)
+            samesite='Lax',
+            max_age=60 * 60,          # 60 minutes
+            path='/',
+            domain='localhost',
+        )
+
+        response.set_cookie(
+            key='refresh_token',
+            value=refresh,
+            httponly=True,
+            secure=False,
+            samesite='Lax',
+            max_age=60 * 60 * 24 * 7,     # 1 jour
+            path='/',
+            domain='localhost',
+        )
+
+        return response
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """
+    Vue personnalisée pour rafraîchir l'access token avec un refresh token stocké dans un cookie HttpOnly.
+    """
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get('refresh_token')
+
+        if not refresh_token:
+            return Response({"message": "Aucun token de rafraîchissement trouvé."}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.data['refresh'] = refresh_token
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+
+            # Renvoyer un nouveau cookie access_token
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=False,  # à activer en prod
+                samesite='Strict',  # ou 'Lax'
+                max_age=60 * 60,  # 60 minutes
+                path='/',
+                domain='localhost',
+            )
+
+            response.data = {"message": "Access token mis à jour"}
+        
+        return response
 
 class ProfilViewSet(viewsets.ModelViewSet):
     """
@@ -40,8 +109,7 @@ class UtilisateurView(APIView):
     """
     ViewSet pour le modèle Utilisateur
     """
-    permission_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
-
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
     #serializer_class = UtilisateurSerializer 
     def get(self, request, pk=None):
         """
@@ -113,27 +181,29 @@ class ChangerMotDePasseView(APIView):
         user.save()
         return Response({'detail': 'Mot de passe modifié.'}, status=status.HTTP_200_OK)
 
+
 class LogoutView(APIView):
     """
-    Logout User
+    Déconnexion de l'utilisateur : supprime les cookies et blacklist le refresh token.
     """
-    permission_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
-
     def post(self, request, *args, **kwargs):
-        """
-        Logout a user and blacklist the token
-        Returns : Response
-        """
+        refresh_token = request.COOKIES.get('refresh_token')
+
+        if not refresh_token:
+            return Response({"message": "Aucun token de rafraîchissement trouvé."}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            # Blacklist the token
-            refresh_token = request.data.get('refresh')
+            # Blackliste le refresh token
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response({"message": "Logout failed", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except (TokenError, InvalidToken) as e:
-            return Response({"message": "Invalid token", "error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+        except TokenError as e:
+            return Response({"message": "Token invalide", "error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Supprimer les cookies côté client
+        response = Response({"message": "Déconnexion réussie"}, status=status.HTTP_205_RESET_CONTENT)
+        response.delete_cookie('access_token', path='/', domain='localhost')
+        response.delete_cookie('refresh_token', path='/', domain='localhost')
+        return response
         
 class ConcoursViewSet(viewsets.ModelViewSet):
     """

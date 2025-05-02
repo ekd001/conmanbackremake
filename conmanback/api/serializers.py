@@ -5,7 +5,7 @@ from .models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Menti
     Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Candidat, Parametre, Jury, MembreJury,
     CoefficientMatierePhase
 )  # Replace with your actual model name
-
+import datetime
 class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         # Récupère l'email et le mot de passe
@@ -17,12 +17,15 @@ class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
 
         if not user or not user.check_password(password) or not user.is_active:
             raise AuthenticationFailed("Code access ou mot de passe invalide.")
+        user.last_login = datetime.datetime.now()
+        user.save()
 
         # Génère et retourne les tokens avec les informations de l'utilisateur
         refresh = self.get_token(user)
         return {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
+            'id': user.id,
             'nom': user.nom,
             'prenom': user.prenom,
             'profil': user.profil.nomProfil,

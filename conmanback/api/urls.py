@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
-    ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
+    CustomTokenRefreshView, ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
     CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView, MatiereViewSet, NoteViewSet, DiplomeObtenuViewSet, SpecialiteViewSet,
     DossierViewSet, EleveViewSet, CandidatViewSet, ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet
 )
@@ -44,6 +44,6 @@ urlpatterns = [
     path('utilisateur/<int:pk>/', UtilisateurView.as_view()), # récupérer un utilisateur, supprimer ou mettre à jour un utilisateur
     path('login/', CustomTokenObtainPairView.as_view(), name="login"),
     path('changer-mot-de-passe/<int:pk>/', ChangerMotDePasseView.as_view(), name="changer-mot-de-passe"),
-    path('token/refresh/',TokenRefreshView.as_view(),name="token-refresh"),
+    path('token/refresh/',CustomTokenRefreshView.as_view(),name="token-refresh"),
     path('logout/', LogoutView.as_view(), name="logout")
 ]
