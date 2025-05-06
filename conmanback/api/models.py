@@ -204,7 +204,7 @@ class Dossier(models.Model):
     """
     id_dossier = models.AutoField(primary_key=True)
     specialite = models.ForeignKey(Specialite, on_delete=models.SET_NULL, null=True, related_name="Dossier")
-    date_inscription = models.DateField()
+    date_inscription = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"Dossier ID: {self.id_dossier}, Spécialité: {self.specialite}"

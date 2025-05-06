@@ -64,6 +64,17 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         return response
 
+class CurrentUserView(APIView):
+    """
+    Vue pour obtenir les informations de l'utilisateur actuel
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UtilisateurSerializer(user)
+        return Response(serializer.data)
+
 class CustomTokenRefreshView(TokenRefreshView):
     """
     Vue personnalisée pour rafraîchir l'access token avec un refresh token stocké dans un cookie HttpOnly.

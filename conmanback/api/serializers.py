@@ -25,10 +25,7 @@ class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
         return {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'id': user.id,
-            'nom': user.nom,
-            'prenom': user.prenom,
-            'profil': user.profil.nomProfil,
+            'user': user
         }
 
     @property
