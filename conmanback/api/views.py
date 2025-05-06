@@ -36,6 +36,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         data = serializer.validated_data
         access = data.pop('access')
         refresh = data.pop('refresh')
+        
 
         response = Response(data, status=status.HTTP_200_OK)
 

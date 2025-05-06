@@ -19,13 +19,14 @@ class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
             raise AuthenticationFailed("Code access ou mot de passe invalide.")
         user.last_login = datetime.datetime.now()
         user.save()
+        user_data  = UtilisateurSerializer(user).data
 
         # Génère et retourne les tokens avec les informations de l'utilisateur
         refresh = self.get_token(user)
         return {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'user': user
+            'user': user_data
         }
 
     @property
