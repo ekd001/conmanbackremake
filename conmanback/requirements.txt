@@ -7,3 +7,4 @@ requests
 Pillow
 PyYAML
 djangorestframework-simplejwt
+django-import-export

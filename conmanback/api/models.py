@@ -255,7 +255,7 @@ class Candidat(Eleve):
     modèle représentant un Candidat
     """
     num_table = models.AutoField(primary_key=True)
-    notes = models.ManyToManyField(Note, related_name="Candidat")  # Many-to-Many relation
+    notes = models.ManyToManyField(Note, related_name="Candidat", null=True)  # Many-to-Many relation
 
     def __str__(self):
         return f"Candidat : {self.num_table}, {self.nom}"

@@ -156,13 +156,42 @@ class EleveSerializer(serializers.ModelSerializer):
         model = Eleve
         fields = '__all__'  # serialize all the field
                                         
+# class CandidatSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer pour le modèle Candidat
+#     """
+#     class Meta:
+#         model = Candidat
+#         fields = '__all__'  # serialize all the field
+
 class CandidatSerializer(serializers.ModelSerializer):
-    """
-    Serializer pour le modèle Candidat
-    """
+    # Inclure les champs de `Eleve` dans le sérialiseur de `Candidat`
+    nom = serializers.CharField(source='eleve_ptr.nom')
+    prenom = serializers.CharField(source='eleve_ptr.prenom')
+    sexe = serializers.ChoiceField(choices=Eleve.SEXE_CHOICES, source='eleve_ptr.sexe')
+    date_naissance = serializers.DateField(source='eleve_ptr.date_naissance')
+    lieu_naissance = serializers.CharField(source='eleve_ptr.lieu_naissance')
+    # pays_naissance = serializers.PrimaryKeyRelatedField(queryset=Eleve.objects.all(), source='eleve_ptr.pays_naissance')
+    telephone = serializers.CharField(source='eleve_ptr.telephone')
+    email = serializers.EmailField(source='eleve_ptr.email')
+    addresse = serializers.CharField(source='eleve_ptr.addresse')
+    # dossier = serializers.PrimaryKeyRelatedField(queryset=Eleve.objects.all(), source='eleve_ptr.dossier')
+
     class Meta:
         model = Candidat
-        fields = '__all__'  # serialize all the field
+        fields = [
+            'num_table', 'notes', 'nom', 'prenom', 'sexe', 'date_naissance', 'lieu_naissance',
+            'pays_naissance', 'telephone', 'email', 'addresse', 'dossier'
+        ]
+
+    def create(self, validated_data):
+        # Extraire les données de `Eleve`
+        eleve_data = validated_data.pop('eleve_ptr')
+        eleve = Eleve.objects.create(**eleve_data)
+
+        # Créer l'objet `Candidat` en utilisant l'objet `Eleve`
+        candidat = Candidat.objects.create(eleve_ptr=eleve, **validated_data)
+        return candidat
                          
 class ParametreSerializer(serializers.ModelSerializer):
     """

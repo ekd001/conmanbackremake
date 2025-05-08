@@ -1,4 +1,5 @@
 from rest_framework.decorators import action
+from django.http import HttpResponse
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
 from rest_framework import status, viewsets, permissions
@@ -17,6 +18,58 @@ from .serializers import (
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer, CandidatSerializer, ParametreSerializer, JurySerializer,
     MembreJurySerializer, CoefficientMatierePhaseSerializer
 )
+from .resources import (
+    ConcoursResource, ProfilResource, UtilisateurResource, InfosGeneralesResource, SerieResource,
+    MentionResource, PaysResource, DiplomeResource, MatiereResource, NoteResource, SpecialiteResource, 
+    DiplomeObtenuResource, DossierResource, EleveResource, CandidatResource, ParametreResource, JuryResource,
+    MembreJuryResource, CoefficientMatierePhaseResource
+)
+from .utils import export_multiple_resources
+
+def archive(request):
+    querysets = [
+        (Concours.objects.all(), ConcoursResource),
+        (Note.objects.all(), NoteResource),
+        (DiplomeObtenu.objects.all(), DiplomeObtenuResource),
+        (Dossier.objects.all(), DossierResource),
+        (Eleve.objects.all(), EleveResource),
+        (Candidat.objects.all(), CandidatResource),
+    ]
+
+    combined_dataset = export_multiple_resources(querysets, format='csv')
+
+    response = HttpResponse(combined_dataset.export(), content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="combined_data.csv"'
+    return response
+
+def archive_all(request):
+    querysets = [
+        (Profil.objects.all(), ProfilResource),
+        (Utilisateur.objects.all(), UtilisateurResource),
+        (Concours.objects.all(), ConcoursResource),
+        (InfosGenerales.objects.all(), InfosGeneralesResource),
+        (Serie.objects.all(), SerieResource),
+        (Mention.objects.all(), MentionResource),
+        (Pays.objects.all(), PaysResource),
+        (Diplome.objects.all(), DiplomeResource),
+        (Matiere.objects.all(), MatiereResource),
+        (Note.objects.all(), NoteResource),
+        (DiplomeObtenu.objects.all(), DiplomeObtenuResource),
+        (Specialite.objects.all(), SpecialiteResource),
+        (Dossier.objects.all(), DossierResource),
+        (Eleve.objects.all(), EleveResource),
+        (Candidat.objects.all(), CandidatResource),
+        (Parametre.objects.all(), ParametreResource),
+        (Jury.objects.all(), JuryResource),
+        (MembreJury.objects.all(), MembreJuryResource),
+        (CoefficientMatierePhase.objects.all(), CoefficientMatierePhaseResource),
+    ]
+
+    combined_dataset = export_multiple_resources(querysets, format='csv')
+
+    response = HttpResponse(combined_dataset.export(), content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="combined_data.csv"'
+    return response
 
 # Create your views here.
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -270,3 +323,4 @@ class CoefficientMatierePhaseViewSet(viewsets.ModelViewSet):
     queryset = CoefficientMatierePhase.objects.all()
     serializer_class = CoefficientMatierePhaseSerializer
     permission_classes = [permissions.IsAuthenticated]
+
