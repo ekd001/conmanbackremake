@@ -1,0 +1,246 @@
+[
+{
+  "model": "api.profil",
+  "pk": 1,
+  "fields": {
+    "numProfil": "ADM147",
+    "nomProfil": "admin"
+  }
+},
+{
+  "model": "api.profil",
+  "pk": 2,
+  "fields": {
+    "numProfil": "US123",
+    "nomProfil": "utilisateur"
+  }
+},
+{
+  "model": "api.utilisateur",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$xTY0dSXNcDMu3xZMNoE0FK$i5bueXomcoz+yup8b7DVX72i+QZm+dZ5cPHQlba8Sq0=",
+    "last_login": null,
+    "is_superuser": false,
+    "nom": "evanou",
+    "prenom": "emmanuel",
+    "email": "ema@example",
+    "telephone": "455669995",
+    "code_access": "008",
+    "profil": 1,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "api.utilisateur",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$diGRkg7BP2A7MD5q5IdwjR$TIvzCxWsBIRhpy25PyJxbK+FMyu84wYvpZcyQvZCdzs=",
+    "last_login": null,
+    "is_superuser": false,
+    "nom": "ABALO",
+    "prenom": "koffi",
+    "email": "koffi@example.com",
+    "telephone": "14756329",
+    "code_access": "dji",
+    "profil": 2,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "api.utilisateur",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$Z8ggPZVfSvPWY4nHd6QYu7$u+1Pwf2NyUcPUKJW+XzGcsd+r/l7USy3xE2Xg8nY8LE=",
+    "last_login": null,
+    "is_superuser": false,
+    "nom": "Adjoa",
+    "prenom": "Sesi",
+    "email": "sylvaingossou@gmail.com",
+    "telephone": "93616072",
+    "code_access": "adj",
+    "profil": 1,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "api.utilisateur",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$qkQE1gGeP2DLbguc5rRZhi$ylIr4n2BUyagaukqOLntRAAI/TA28yKT7hzHeT4b6g4=",
+    "last_login": null,
+    "is_superuser": false,
+    "nom": "Adjoa",
+    "prenom": "Sesi",
+    "email": "sylvaingossou@gmail.com",
+    "telephone": "93616072",
+    "code_access": "adjé",
+    "profil": 1,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "api.serie",
+  "pk": 1,
+  "fields": {
+    "libelle": "Série A"
+  }
+},
+{
+  "model": "api.mention",
+  "pk": 1,
+  "fields": {
+    "libelle": "Honorable",
+    "abreviation": "HN",
+    "moy_min": "18.00",
+    "moy_max": "20.00"
+  }
+},
+{
+  "model": "api.pays",
+  "pk": 3,
+  "fields": {
+    "nom_pays": "Togo",
+    "code_pays": "TG",
+    "nationalite": null,
+    "indicatif": null
+  }
+},
+{
+  "model": "api.diplome",
+  "pk": 1,
+  "fields": {
+    "libelle": "BAC1",
+    "abreviation": "BAC"
+  }
+},
+{
+  "model": "api.matiere",
+  "pk": 2,
+  "fields": {
+    "libelle": "Math",
+    "abreviation": "MTH"
+  }
+},
+{
+  "model": "api.note",
+  "pk": 1,
+  "fields": {
+    "matiere": 2,
+    "note": "18.00",
+    "est_preselection": true
+  }
+},
+{
+  "model": "api.note",
+  "pk": 2,
+  "fields": {
+    "matiere": 2,
+    "note": "18.00",
+    "est_preselection": true
+  }
+},
+{
+  "model": "api.note",
+  "pk": 3,
+  "fields": {
+    "matiere": null,
+    "note": "0.00",
+    "est_preselection": true
+  }
+},
+{
+  "model": "api.note",
+  "pk": 4,
+  "fields": {
+    "matiere": 2,
+    "note": "0.00",
+    "est_preselection": true
+  }
+},
+{
+  "model": "api.specialite",
+  "pk": 1,
+  "fields": {
+    "libelle": "Tronc commun",
+    "abreviation": "TCC"
+  }
+},
+{
+  "model": "api.dossier",
+  "pk": 1,
+  "fields": {
+    "specialite": 1,
+    "date_inscription": "2025-04-23"
+  }
+},
+{
+  "model": "api.diplomeobtenu",
+  "pk": 2,
+  "fields": {
+    "dossier": 1,
+    "diplome": 1,
+    "serie": 1,
+    "pays": 3,
+    "mention": 1,
+    "annee": 2025,
+    "notes": [
+      1
+    ]
+  }
+},
+{
+  "model": "api.eleve",
+  "pk": 1,
+  "fields": {
+    "dossier": 1,
+    "nom": "DOSSOU",
+    "prenom": "Ablam Robert",
+    "sexe": "M",
+    "date_naissance": "2005-05-04",
+    "lieu_naissance": "Lome",
+    "pays_naissance": 3,
+    "telephone": "+228 93616072",
+    "email": "ablam@gmail.com",
+    "addresse": "Akodessewa"
+  }
+},
+{
+  "model": "api.parametre",
+  "pk": 1,
+  "fields": {
+    "duree_max_oisivete": 3600,
+    "bonus_annee_bac": 5
+  }
+},
+{
+  "model": "api.jury",
+  "pk": 1,
+  "fields": {
+    "libelle": "Trancheur diplome"
+  }
+},
+{
+  "model": "api.membrejury",
+  "pk": 1,
+  "fields": {
+    "jury": 1,
+    "nom": "EDOH",
+    "prenom": "Gildas"
+  }
+},
+{
+  "model": "api.coefficientmatierephase",
+  "pk": 1,
+  "fields": {
+    "specialite": 1,
+    "matiere": 2,
+    "estPreselection": true,
+    "coefficient": 4
+  }
+}
+]
