@@ -81,6 +81,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
 
+        # print("This is request data --> ", request.data)
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as e:
@@ -90,6 +91,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         access = data.pop('access')
         refresh = data.pop('refresh')
         
+        # print("Access token: ", access)
+        # print("Refresh token: ", refresh)
 
         response = Response(data, status=status.HTTP_200_OK)
 
@@ -98,23 +101,30 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             key='access_token',
             value=access,
             httponly=True,
-            secure=False,              # à activer en production (HTTPS)
-            samesite='Lax',
+            secure=True,              # à activer en production (HTTPS)
+            samesite='none',
             max_age=60 * 60,          # 60 minutes
             path='/',
-            domain='localhost',
+            # domain='localhost',
         )
 
         response.set_cookie(
             key='refresh_token',
             value=refresh,
             httponly=True,
-            secure=False,
-            samesite='Lax',
+            secure=True,
+            samesite='none',
             max_age=60 * 60 * 24 * 7,     # 1 jour
             path='/',
-            domain='localhost',
+            # domain='localhost',
         )
+
+        # token = request.COOKIES.get('access_token')
+        # if token is not None:
+        #     print("Le token existe déjà dans le cookie ", token)
+        # else:
+        #     print("Le token n'existe pas dans le cookie", token)
+
 
         return response
 
