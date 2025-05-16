@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     CustomTokenRefreshView,CurrentUserView, ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
     CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView, MatiereViewSet, NoteViewSet, DiplomeObtenuViewSet, SpecialiteViewSet,
-    DossierViewSet, EleveViewSet, CandidatViewSet, ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet
+    DossierViewSet, EleveViewSet, CandidatViewSet, ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet, export_database
 )
 
 """
@@ -46,5 +46,6 @@ urlpatterns = [
     path('login/', CustomTokenObtainPairView.as_view(), name="login"),
     path('changer-mot-de-passe/<int:pk>/', ChangerMotDePasseView.as_view(), name="changer-mot-de-passe"),
     path('token/refresh/',CustomTokenRefreshView.as_view(),name="token-refresh"),
-    path('logout/', LogoutView.as_view(), name="logout")
+    path('logout/', LogoutView.as_view(), name="logout"),
+    path('export-database/', export_database, name="export-database"),
 ]

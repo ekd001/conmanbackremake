@@ -305,3 +305,13 @@ class CoefficientMatierePhase(models.Model):
 
     def __str__(self):
         return f"Coefficient Matiere Phase : {self.matiere}, {self.coefficient}. Preselection : {self.estPreselection}"
+
+class Archivage(models.Model):
+    """
+    modèle représentant un Archive
+    """
+    id_archive = models.AutoField(primary_key=True)
+    fichier = models.CharField(max_length=255)
+    date = models.DateField(auto_now_add=True)
+    def __str__(self):
+        return f"Archive : {self.date}"

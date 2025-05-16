@@ -6,10 +6,15 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
+from django.http import FileResponse, JsonResponse, HttpResponseNotAllowed
+import os
+import subprocess
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
 from .models import (Profil,Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
-    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury, CoefficientMatierePhase)
+    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage)
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
@@ -352,3 +357,43 @@ class CoefficientMatierePhaseViewSet(viewsets.ModelViewSet):
     queryset = CoefficientMatierePhase.objects.all()
     serializer_class = CoefficientMatierePhaseSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+@csrf_exempt
+def export_database(request):
+    """
+    Exporter la base de données au format JSON
+    """
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    # Chemin de sortie
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    export_dir = 'archives'
+    export_filename = f"export_{timestamp}.sql"
+    export_path = os.path.join(export_dir, export_filename)
+
+    # Crée le dossier s'il n'existe pas
+    os.makedirs(export_dir, exist_ok=True)
+
+    try:
+        # Export de la base
+        with open(export_path, 'w') as f:
+            subprocess.run(['sqlite3', 'db.sqlite3', '.dump'], stdout=f, check=True)
+
+        # Enregistre dans le modèle Archivage
+        Archivage.objects.create(
+            fichier=export_path,
+            date=datetime.now()
+        )
+
+        # Renvoie le fichier en téléchargement
+        return FileResponse(
+            open(export_path, 'rb'),
+            as_attachment=True,
+            filename=export_filename,
+            content_type='application/sql'
+        )
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
