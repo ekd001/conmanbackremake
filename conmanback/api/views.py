@@ -14,12 +14,12 @@ import subprocess
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
 from .models import (Profil,Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
-    Dossier, Eleve, Candidat, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage)
+    Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat,)
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
-    DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer, CandidatSerializer, ParametreSerializer, JurySerializer,
-    MembreJurySerializer, CoefficientMatierePhaseSerializer
+    DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
+    MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer,
     )
 
 # Create your views here.
@@ -41,7 +41,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         data = serializer.validated_data
         access = data.pop('access')
         refresh = data.pop('refresh')
-        
 
         response = Response(data, status=status.HTTP_200_OK)
 
@@ -50,22 +49,22 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             key='access_token',
             value=access,
             httponly=True,
-            secure=False,              # à activer en production (HTTPS)
-            samesite='Lax',
+            secure=True,              # à activer en production (HTTPS)
+            samesite='none',
             max_age=60 * 60,          # 60 minutes
             path='/',
-            domain='localhost',
+            # domain='localhost',
         )
 
         response.set_cookie(
             key='refresh_token',
             value=refresh,
             httponly=True,
-            secure=False,
-            samesite='Lax',
+            secure=True,
+            samesite='none',
             max_age=60 * 60 * 24 * 7,     # 1 jour
             path='/',
-            domain='localhost',
+            # domain='localhost',
         )
 
         return response

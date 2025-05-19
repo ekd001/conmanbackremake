@@ -200,31 +200,31 @@ class Specialite(models.Model):
 
 class Dossier(models.Model):
     """
-    modèle représentant un Dossier
+    Modèle représentant un Dossier
     """
     id_dossier = models.AutoField(primary_key=True)
     specialite = models.ForeignKey(Specialite, on_delete=models.SET_NULL, null=True, related_name="Dossier")
-    date_inscription = models.DateField(auto_now_add=True)
+    diplomes_obtenus = models.ManyToManyField("DiplomeObtenu", related_name="dossiers", blank=True)
+    date_inscription = models.DateField()
 
     def __str__(self):
         return f"Dossier ID: {self.id_dossier}, Spécialité: {self.specialite}"
 
+
 class DiplomeObtenu(models.Model):
     """
-    modèle représentant un diplome obtenu par un Eleve
-    S'assurer d'avoir crééé le modèle Dossier avant de créer ce modèle
+    Modèle représentant un diplôme obtenu
     """
     id_diplome_obtenu = models.AutoField(primary_key=True)
-    dossier = models.ForeignKey(Dossier, on_delete=models.CASCADE, null=True, related_name="DiplomesObtenus")  # One-to-Many relation
     diplome = models.ForeignKey(Diplome, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
     serie = models.ForeignKey(Serie, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
     pays = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
     mention = models.ForeignKey(Mention, on_delete=models.SET_NULL, null=True, related_name="DiplomeObtenu")
     notes = models.ManyToManyField(Note, related_name="DiplomesObtenus")  # Many-to-Many relation
-    annee = models.IntegerField()
+    annee = models.DateField()
 
     def __str__(self):
-        return f"DiplomeObtenu ID: {self.id_diplome_obtenu}, Année: {self.annee}"
+        return f"DiplomeObtenu {self.diplome} ({self.annee})"
 
 class Eleve(models.Model):
     """
@@ -237,28 +237,30 @@ class Eleve(models.Model):
 
     id_eleve = models.AutoField(primary_key=True)
     dossier = models.ForeignKey(Dossier, on_delete=models.SET_NULL, null=True, related_name="Eleve")  # One-to-Many relation
-    nom = models.CharField(max_length=100)
-    prenom = models.CharField(max_length=100)
-    sexe = models.CharField(max_length=1, choices=SEXE_CHOICES)  # Enumération pour le sexe
-    date_naissance = models.DateField()
-    lieu_naissance = models.CharField(max_length=100)
+    nom = models.CharField(max_length=100, null=True)
+    prenom = models.CharField(max_length=100, null=True)
+    sexe = models.CharField(max_length=1, choices=SEXE_CHOICES, default="M")  # Enumération pour le sexe
+    date_naissance = models.DateField(null=True)
+    lieu_naissance = models.CharField(max_length=100, null=True)
     pays_naissance = models.ForeignKey(Pays, on_delete=models.SET_NULL, null=True, related_name="Eleve")
-    telephone = models.CharField(max_length=20)
-    email = models.EmailField()
-    addresse = models.CharField(max_length=100)
+    telephone = models.CharField(max_length=20, null=True)
+    email = models.EmailField(null=True)
+    addresse = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return f"Eleve : {self.nom}, {self.prenom}"
 
-class Candidat(Eleve):
+class Candidat(models.Model):  # Ajout de models.Model
     """
     modèle représentant un Candidat
     """
-    num_table = models.AutoField(primary_key=True)
+    id_candidat = models.AutoField(primary_key=True, default=0)
+    num_table = models.CharField(max_length=4, null=True)
+    eleve = models.OneToOneField(Eleve, on_delete=models.SET_NULL, null=True, related_name="candidat")  # Relation one-to-one
     notes = models.ManyToManyField(Note, related_name="Candidat")  # Many-to-Many relation
 
     def __str__(self):
-        return f"Candidat : {self.num_table}, {self.nom}"
+        return f"Candidat : {self.num_table}, {self.eleve.nom}"
 
 class Parametre(models.Model):
     """
@@ -300,8 +302,8 @@ class CoefficientMatierePhase(models.Model):
     id_coeffmp = models.AutoField(primary_key=True) # coeffmp -> coeff = coefficient, m = matiere, p = phase
     specialite = models.ForeignKey(Specialite, on_delete=models.SET_NULL, null=True, related_name="CoeffMP")  # One-to-Many relation
     matiere = models.ForeignKey(Matiere, on_delete=models.SET_NULL, null=True, related_name="CoeffMP")  # One-to-Many relation
-    estPreselection = models.BooleanField()
-    coefficient = models.IntegerField()
+    estPreselection = models.BooleanField(default=True)
+    coefficient = models.IntegerField(null=True)
 
     def __str__(self):
         return f"Coefficient Matiere Phase : {self.matiere}, {self.coefficient}. Preselection : {self.estPreselection}"
