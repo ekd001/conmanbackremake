@@ -255,7 +255,7 @@ class Candidat(models.Model):  # Ajout de models.Model
     modèle représentant un Candidat
     """
     id_candidat = models.AutoField(primary_key=True, default=0)
-    num_table = models.CharField(max_length=4, null=True)
+    num_table = models.CharField(max_length=4, null=True, unique=True)
     eleve = models.OneToOneField(Eleve, on_delete=models.SET_NULL, null=True, related_name="candidat")  # Relation one-to-one
     notes = models.ManyToManyField(Note, related_name="Candidat")  # Many-to-Many relation
 
@@ -267,8 +267,8 @@ class Parametre(models.Model):
     modèle représentant un Parametre
     """
     id_parametre = models.AutoField(primary_key=True)
-    duree_max_oisivete = models.IntegerField()
-    bonus_annee_bac = models.IntegerField()
+    duree_max_oisivete = models.IntegerField(null=True)
+    bonus_annee_bac = models.IntegerField(null=True)
 
     def __str__(self):
         return f"Oisivete : {self.duree_max_oisivete}, Bonus Annee Bac : {self.bonus_annee_bac}"
