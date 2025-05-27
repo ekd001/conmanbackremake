@@ -143,14 +143,14 @@ class Pays(models.Model):
     """
     modèle représentant un pays
     """
-    id_pays = models.AutoField(primary_key=True)
-    nom_pays = models.CharField(max_length=100)
+    id_pays = models.AutoField(primary_key=True) 
+    nom_pays = models.CharField(max_length=100) # Chacune des champs de ce model doit etre unique dans la base de donnée
     code_pays = models.CharField(max_length=3)
     nationalite = models.CharField(max_length=100, null=True)
     indicatif = models.CharField(max_length=5, null=True)
 
     def __str__(self):
-        return f"{self.libelle}"
+        return f"{self.nom_pays}"
 
 class Diplome(models.Model):
     """
@@ -196,7 +196,7 @@ class Specialite(models.Model):
     abreviation = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Diplome ID: {self.id_specialite}, libelle: {self.libelle}"
+        return f"{self.__dict__}"
 
 class Dossier(models.Model):
     """

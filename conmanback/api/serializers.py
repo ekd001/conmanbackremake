@@ -158,7 +158,7 @@ class EleveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Eleve
         fields = '__all__'  # serialize all the field
-                                        
+                                 
 class CandidatSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Candidat
@@ -166,35 +166,6 @@ class CandidatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidat
         fields = '__all__'  # serialize all the field
-
-# class CandidatSerializer(serializers.ModelSerializer):
-#     # Inclure les champs de `Eleve` dans le sérialiseur de `Candidat`
-#     nom = serializers.CharField(source='eleve_ptr.nom')
-#     prenom = serializers.CharField(source='eleve_ptr.prenom')
-#     sexe = serializers.ChoiceField(choices=Eleve.SEXE_CHOICES, source='eleve_ptr.sexe')
-#     date_naissance = serializers.DateField(source='eleve_ptr.date_naissance')
-#     lieu_naissance = serializers.CharField(source='eleve_ptr.lieu_naissance')
-#     # pays_naissance = serializers.PrimaryKeyRelatedField(queryset=Eleve.objects.all(), source='eleve_ptr.pays_naissance')
-#     telephone = serializers.CharField(source='eleve_ptr.telephone')
-#     email = serializers.EmailField(source='eleve_ptr.email')
-#     addresse = serializers.CharField(source='eleve_ptr.addresse')
-#     # dossier = serializers.PrimaryKeyRelatedField(queryset=Eleve.objects.all(), source='eleve_ptr.dossier')
-
-#     class Meta:
-#         model = Candidat
-#         fields = [
-#             'num_table', 'notes', 'nom', 'prenom', 'sexe', 'date_naissance', 'lieu_naissance',
-#             'pays_naissance', 'telephone', 'email', 'addresse', 'dossier'
-#         ]
-
-#     def create(self, validated_data):
-#         # Extraire les données de `Eleve`
-#         eleve_data = validated_data.pop('eleve_ptr')
-#         eleve = Eleve.objects.create(**eleve_data)
-
-#         # Créer l'objet `Candidat` en utilisant l'objet `Eleve`
-#         candidat = Candidat.objects.create(eleve_ptr=eleve, **validated_data)
-#         return candidat
                          
 class ParametreSerializer(serializers.ModelSerializer):
     """
@@ -228,3 +199,64 @@ class CoefficientMatierePhaseSerializer(serializers.ModelSerializer):
         model = CoefficientMatierePhase
         fields = '__all__'  # serialize all the field
         
+# Adding custom serializers
+class CustomNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = ['matiere', 'note', 'est_preselection']
+
+class CustomDiplomeObtenuSerializer(serializers.ModelSerializer):
+    notes = CustomNoteSerializer(many=True)
+
+    class Meta:
+        model = DiplomeObtenu
+        fields = ['diplome', 'serie', 'pays', 'mention', 'annee', 'notes']
+
+    def create(self, validated_data):
+        # Extraire les données des notes
+        notes_data = validated_data.pop('notes')
+
+        # Créer le DiplomeObtenu
+        diplome_obtenu = DiplomeObtenu.objects.create(**validated_data)
+
+        # Créer les notes associées et les lier au DiplomeObtenu
+        notes = [Note.objects.create(**note_data) for note_data in notes_data]
+        diplome_obtenu.notes.set(notes)  # Utilisation de .set() pour lier les notes
+
+        return diplome_obtenu
+    
+class CustomDossierSerializer(serializers.ModelSerializer):
+    diplomes_obtenus = CustomDiplomeObtenuSerializer(many=True)
+
+    class Meta:
+        model = Dossier
+        fields = ['specialite', 'date_inscription', 'diplomes_obtenus']
+
+class CustomEleveSerializer(serializers.ModelSerializer):
+    dossier = CustomDossierSerializer()
+
+    class Meta:
+        model = Eleve
+        fields = ['nom', 'prenom', 'sexe', 'date_naissance', 'lieu_naissance', 'pays_naissance', 'telephone', 'email', 'addresse', 'dossier']
+
+    def create(self, validated_data):
+        dossier_data = validated_data.pop('dossier')
+        diplomes_data = dossier_data.pop('diplomes_obtenus')
+
+        # Créer le Dossier sans les diplomes
+        dossier = Dossier.objects.create(**dossier_data)
+
+        # Créer les diplomes avec leurs notes via le serializer
+        diplomes = []
+        for diplome_data in diplomes_data:
+            notes_data = diplome_data.pop('notes')
+            diplome = DiplomeObtenu.objects.create(**diplome_data)
+            notes = [Note.objects.create(**note_data) for note_data in notes_data]
+            diplome.notes.set(notes)
+            diplomes.append(diplome)
+
+        dossier.diplomes_obtenus.set(diplomes)
+
+        # Créer l'élève
+        eleve = Eleve.objects.create(dossier=dossier, **validated_data)
+        return eleve

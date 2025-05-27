@@ -1,4 +1,4 @@
-
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
 from rest_framework import status, viewsets, permissions
@@ -19,8 +19,9 @@ from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
-    MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer,
+    MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer
     )
+import json
 
 # Create your views here.
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -396,3 +397,35 @@ def export_database(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+# def create_full_eleve(request):
+#     if request.method != 'POST':
+#         return HttpResponseNotAllowed(['POST'])
+
+#     try:
+#         # Récupérer et décoder le JSON
+#         data = json.loads(request.body)
+        
+#         print("Données reçues :", data)
+
+#         # Exemple de traitement
+#         message = f"Élève {data.get('nom')} {data.get('prenom')} reçu."
+#         return JsonResponse({"message": message}, status=201)
+
+#     except json.JSONDecodeError:
+#         return JsonResponse({"error": "Données JSON invalides"}, status=400)
+
+# Adding custom View
+class EleveCreateView(APIView):
+    @swagger_auto_schema(
+        request_body=CustomEleveSerializer,
+        responses={201: CustomEleveSerializer}
+    )
+    def post(self, request):
+        serializer = CustomEleveSerializer(data=request.data)
+        if serializer.is_valid():
+            eleve = serializer.save()
+            return Response(CustomEleveSerializer(eleve).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
