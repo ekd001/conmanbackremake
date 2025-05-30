@@ -246,7 +246,7 @@ class Eleve(models.Model):
     telephone = models.CharField(max_length=20, null=True)
     email = models.EmailField(null=True)
     addresse = models.CharField(max_length=100, null=True)
-    poids = models.DecimalField(max_digits=6, decimal_places=4)
+    poids = models.DecimalField(max_digits=6, decimal_places=4, default=0)
 
     def __str__(self):
         return f"Eleve : {self.nom}, {self.prenom}"

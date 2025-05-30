@@ -32,16 +32,16 @@ def compute_average(notes, coeffs_matieres):
     s = 0
     coeff_sum = 0
     for note in notes:
-        print("Interating through notes")
+        # print("Interating through notes")
         for coeff_matiere in coeffs_matieres:
-            print("Interating through CoefficientMatierePhase")
+            # print("Interating through CoefficientMatierePhase")
             if note.matiere == coeff_matiere.matiere:
                 s += note.note * coeff_matiere.coefficient
                 coeff_sum += coeff_matiere.coefficient
                 break
     return s / coeff_sum
 
-def compute_eleve_average(eleve: Eleve, matieres, diploma_to_consider="BAC1"):
+def compute_eleve_average(eleve: Eleve, matieres, diploma_to_consider="Baccalauréat Deuxième Partie"):
     diplomes_obtenus: list[DiplomeObtenu] = eleve.dossier.diplomes_obtenus.all()
     for diplome_obtenu in diplomes_obtenus:
         if diplome_obtenu.diplome.libelle == diploma_to_consider:

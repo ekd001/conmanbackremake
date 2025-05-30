@@ -308,8 +308,10 @@ def eleve_mock():
             annee=fake.date_between(start_date="-10y", end_date="today")
         )
         diplome_obtenu_1.notes.add(
-            Note.objects.create(matiere=Matiere.objects.filter(libelle="Français"), note=randint(8, 16)), 
-            Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais"), note=randint(8, 19)),
+            Note.objects.create(matiere=Matiere.objects.filter(libelle="Français").first(), note=randint(8, 16), est_preselection=True), 
+            Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais").first(), note=randint(8, 19), est_preselection=True),
+            # [
+            # ]
         )
 
         diplome_obtenu_2 = DiplomeObtenu.objects.create(
@@ -320,8 +322,10 @@ def eleve_mock():
             annee=fake.date_between(start_date="-10y", end_date="today")
         )
         diplome_obtenu_2.notes.add(
-            Note.objects.create(matiere=Matiere.objects.get(libelle="Français"), note=randint(8, 16)), 
-            Note.objects.create(matiere=Matiere.objects.get(libelle="Anglais"), note=randint(8, 19)),
+            Note.objects.create(matiere=Matiere.objects.filter(libelle="Français").first(), note=randint(8, 16), est_preselection=True), 
+            Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais").first(), note=randint(8, 19), est_preselection=True),
+            # [
+            # ]
         )
 
         # Créer un Dossier unique pour chaque élève
@@ -365,7 +369,7 @@ def run_mock():
     eleve_mock()
 
 def main():
-    utilisateur_mock()
+    run_mock()
 
 if __name__ == '__main__':
     main()
