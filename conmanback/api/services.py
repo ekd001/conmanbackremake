@@ -10,7 +10,7 @@ django.setup()
 
 from api.models import (Profil,Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
     Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat,)
-from api.mocks_data import *
+from api.mocks_data import run_mock
 
 def get_eleves_par_specialite():
     specialites = Specialite.objects.all()
@@ -25,36 +25,56 @@ def get_eleves_par_specialite():
 def get_coeff_par_specialite(specialite: str):
     return CoefficientMatierePhase.objects.filter(specialite=specialite, )
 
+def compute_average(notes, coeffs_matieres):
+    if not notes:
+        print("This eleve has not notes. Returning 0...")
+        return 0 
+    s = 0
+    coeff_sum = 0
+    for note in notes:
+        print("Interating through notes")
+        for coeff_matiere in coeffs_matieres:
+            print("Interating through CoefficientMatierePhase")
+            if note.matiere == coeff_matiere.matiere:
+                s += note.note * coeff_matiere.coefficient
+                coeff_sum += coeff_matiere.coefficient
+                break
+    return s / coeff_sum
+
+def compute_eleve_average(eleve: Eleve, matieres, diploma_to_consider="BAC1"):
+    diplomes_obtenus: list[DiplomeObtenu] = eleve.dossier.diplomes_obtenus.all()
+    for diplome_obtenu in diplomes_obtenus:
+        if diplome_obtenu.diplome.libelle == diploma_to_consider:
+            notes = diplome_obtenu.notes.all()
+            avg = compute_average(notes, matieres)
+            print(f"Eleve -> , {eleve.nom}, {eleve.prenom}, Average -> {avg}")
+
 def calculer_moyenne():
     eleves_par_specialite = get_eleves_par_specialite()
     for specialite, eleves in eleves_par_specialite.items():
-        coeff_matiere = get_coeff_par_specialite(specialite)
+        print("Specialite -> ", specialite.libelle)
+        coeff_matieres = get_coeff_par_specialite(specialite)
+        # print(coeff_matieres)
         for eleve in eleves:
-            diplomes_obt = eleve.dossier.diplomes_obtenus
-            for e in diplomes_obt:
-                if e.diplome.libelle == "":
-                    pass
-            # Calculer la moyenne de l'eleve
-            pass
+            compute_eleve_average(eleve, coeff_matieres)
+            # diplomes_obt = eleve.dossier.diplomes_obtenus
+            # for e in diplomes_obt:
+            #     if e.diplome.libelle == "":
+            #         pass
+            # # Calculer la moyenne de l'eleve
+            # pass
 
 def main():
-    # pays_mock() # Insert Mock Data for Pays entity
-    # serie_mock() # Insert Mock Data for Pays entity
-    # mention_mock()
-    # matiere_mock()
-    # specialite_mock()
-    # parametre_mock()
-    # jury_mock()
-    # membre_jury_mock()
-    # coefficient_matiere_phase_mock()
-    # diplome_mock()
-    # eleve_mock()
-    dict = get_eleves_par_specialite()
-    for e in dict:
-        print("*"*50)
-        print(f"Specialite -> {e.libelle}")
-        for eleve in dict[e]:
-            print(f"{eleve.nom}, {eleve.prenom}")
+
+    # run_mock ()
+    # # Print Eleve objetc per speciality
+    # dict = get_eleves_par_specialite()
+    # for e in dict:
+    #     print("*"*50)
+    #     print(f"Specialite -> {e.libelle}")
+    #     for eleve in dict[e]:
+    #         print(f"{eleve.nom}, {eleve.prenom}")
+    calculer_moyenne()
 
 if __name__ == '__main__':
     main()
