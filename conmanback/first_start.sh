@@ -1,6 +1,6 @@
 # Install all dependencies with pip
-# echo "Installing dependencies using pip"
-# pip install django djangorestframework drf-yasg pyjwt cryptography requests pillow pyyaml djangorestframework-simplejwt
+echo "Installing dependencies using pip"
+pip install django djangorestframework drf-yasg pyjwt cryptography requests pillow pyyaml djangorestframework-simplejwt
 
 # Install all dependencies with conda
 # echo "Installing dependencies using conda"
