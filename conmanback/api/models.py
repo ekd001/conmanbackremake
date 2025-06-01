@@ -255,8 +255,8 @@ class Candidat(models.Model):  # Ajout de models.Model
     """
     modèle représentant un Candidat
     """
-    id_candidat = models.AutoField(primary_key=True, default=0)
-    num_table = models.CharField(max_length=4, null=True, unique=True)
+    id_candidat = models.AutoField(primary_key=True)
+    num_table = models.CharField(max_length=4, null=True)
     eleve = models.OneToOneField(Eleve, on_delete=models.SET_NULL, null=True, related_name="candidat")  # Relation one-to-one
     notes = models.ManyToManyField(Note, related_name="Candidat")  # Many-to-Many relation
 

@@ -25,7 +25,7 @@ def get_eleves_par_specialite():
 def get_coeff_par_specialite(specialite: str):
     return CoefficientMatierePhase.objects.filter(specialite=specialite, )
 
-def compute_average(notes, coeffs_matieres):
+def calculer_moyenne_eleve(notes, coeffs_matieres):
     if not notes:
         print("This eleve has not notes. Returning 0...")
         return 0 
@@ -41,40 +41,41 @@ def compute_average(notes, coeffs_matieres):
                 break
     return s / coeff_sum
 
-def compute_eleve_average(eleve: Eleve, matieres, diploma_to_consider="Baccalauréat Deuxième Partie"):
+def calculer_poids_eleve(eleve: Eleve, matieres, diploma_to_consider="Baccalauréat Deuxième Partie"):
     diplomes_obtenus: list[DiplomeObtenu] = eleve.dossier.diplomes_obtenus.all()
     for diplome_obtenu in diplomes_obtenus:
         if diplome_obtenu.diplome.libelle == diploma_to_consider:
             notes = diplome_obtenu.notes.all()
-            avg = compute_average(notes, matieres)
-            print(f"Eleve -> , {eleve.nom}, {eleve.prenom}, Average -> {avg}")
+            eleve.poids = calculer_moyenne_eleve(notes, matieres)
+            eleve.save()
+            print(f"Eleve -> , {eleve.nom}, {eleve.prenom}, Average -> {eleve.poids}")
+            print(f"Eleve.pods seted -> {eleve.poids}")
 
-def calculer_moyenne():
+def generer_candidats():
     eleves_par_specialite = get_eleves_par_specialite()
     for specialite, eleves in eleves_par_specialite.items():
         print("Specialite -> ", specialite.libelle)
+        num_table = 1
         coeff_matieres = get_coeff_par_specialite(specialite)
-        # print(coeff_matieres)
         for eleve in eleves:
-            compute_eleve_average(eleve, coeff_matieres)
-            # diplomes_obt = eleve.dossier.diplomes_obtenus
-            # for e in diplomes_obt:
-            #     if e.diplome.libelle == "":
-            #         pass
-            # # Calculer la moyenne de l'eleve
-            # pass
+            calculer_poids_eleve(eleve, coeff_matieres)
+            # Mettre ici toute autre logique de sélection pour augmenter ou diminuer le poids d'un élève
+            if eleve.poids >= 10:
+                # Générer un candidat avec son numéro de table
+                candidat = Candidat.objects.create(
+                    eleve=eleve,
+                    num_table=str(num_table).zfill(3),
+                )
+                # candidat.save()
+                num_table += 1
+                print("Candidat créer !")
+
+def get_candidats_specialite(specialite):
+    return Candidat.objects.filter(eleve__dossier__specialite__libelle=specialite)
 
 def main():
-
-    # run_mock ()
-    # # Print Eleve objetc per speciality
-    # dict = get_eleves_par_specialite()
-    # for e in dict:
-    #     print("*"*50)
-    #     print(f"Specialite -> {e.libelle}")
-    #     for eleve in dict[e]:
-    #         print(f"{eleve.nom}, {eleve.prenom}")
-    calculer_moyenne()
+    # generer_candidats()
+    print(get_candidats_specialite("Tronc Commun"))
 
 if __name__ == '__main__':
     main()

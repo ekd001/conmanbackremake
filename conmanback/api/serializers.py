@@ -11,7 +11,7 @@ class CustomTokenObtainPairViewSerializer(TokenObtainPairSerializer):
     
     def validate(self, attrs):
         # Récupère l'email et le mot de passe
-        code_access = attrs.get("code_access")
+        code_access = attrs .get("code_access")
         password = attrs.get("password")
 
         # Cherche l'utilisateur par email

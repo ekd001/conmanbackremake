@@ -21,7 +21,7 @@ from .serializers import (
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
     MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer
     )
-import json
+from .services import get_candidats_specialite
 
 # Create your views here.
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -429,3 +429,10 @@ class EleveCreateView(APIView):
             return Response(CustomEleveSerializer(eleve).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+class CandidatsParSpecialiteView(APIView):
+    def get(self, request, specialite):
+        print("Specialite -> ",  specialite)
+        # Appeler la fonction pour récupérer les candidats
+        candidats = get_candidats_specialite(specialite)
+        serializer = CandidatSerializer(candidats, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
