@@ -47,6 +47,7 @@ class UtilisateurSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Utilisateur
     """
+    profile = ProfilSerializer(read_only=True)  # Utiliser le serializer Profil pour le champ profile
     class Meta:
         model = Utilisateur
         fields = '__all__'  # tserialize all the field
@@ -125,13 +126,7 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = '__all__'  # serialize all the field
         
-class DiplomeObtenuSerializer(serializers.ModelSerializer):
-    """
-    Serializer pour le modèle Diplome Obtenu
-    """
-    class Meta:
-        model = DiplomeObtenu
-        fields = '__all__'  # serialize all the field
+
                 
 class SpecialiteSerializer(serializers.ModelSerializer):
     """
@@ -145,14 +140,31 @@ class DossierSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Dossier
     """
+    specialite = SpecialiteSerializer(read_only=True)  # Utiliser le serializer Specialite pour le champ specialite
     class Meta:
         model = Dossier
         fields = '__all__'  # serialize all the field
-                                
+
+class DiplomeObtenuSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour le modèle Diplome Obtenu
+    """
+    dossier = DossierSerializer(read_only=True) 
+    diplome = DiplomeSerializer(read_only=True) 
+    serie = SerieSerializer(read_only=True)
+    pays = PaysSerializer(read_only=True)
+    mention = MentionSerializer(read_only=True)
+    notes = NoteSerializer(many=True, read_only=True)
+    class Meta:
+        model = DiplomeObtenu
+        fields = '__all__'  # serialize all the field
+
 class EleveSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Eleve
     """
+    dossier = DossierSerializer(read_only=True)  
+    pays_naissance = PaysSerializer(read_only=True)
     class Meta:
         model = Eleve
         fields = '__all__'  # serialize all the field
@@ -185,6 +197,7 @@ class MembreJurySerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Jury
     """
+    jury = JurySerializer(read_only=True)  
     class Meta:
         model = MembreJury
         fields = '__all__'  # serialize all the field
@@ -193,6 +206,8 @@ class CoefficientMatierePhaseSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle CoefficientMatierePhase
     """
+    specialite = SpecialiteSerializer(read_only=True)
+    matiere = MatiereSerializer(read_only=True)
     class Meta:
         model = CoefficientMatierePhase
         fields = '__all__'  # serialize all the field
