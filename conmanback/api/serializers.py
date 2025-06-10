@@ -136,20 +136,11 @@ class SpecialiteSerializer(serializers.ModelSerializer):
         model = Specialite
         fields = '__all__'  # serialize all the field
                         
-class DossierSerializer(serializers.ModelSerializer):
-    """
-    Serializer pour le modèle Dossier
-    """
-    specialite = SpecialiteSerializer(read_only=True)  # Utiliser le serializer Specialite pour le champ specialite
-    class Meta:
-        model = Dossier
-        fields = '__all__'  # serialize all the field
 
 class DiplomeObtenuSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Diplome Obtenu
     """
-    dossier = DossierSerializer(read_only=True) 
     diplome = DiplomeSerializer(read_only=True) 
     serie = SerieSerializer(read_only=True)
     pays = PaysSerializer(read_only=True)
@@ -157,6 +148,16 @@ class DiplomeObtenuSerializer(serializers.ModelSerializer):
     notes = NoteSerializer(many=True, read_only=True)
     class Meta:
         model = DiplomeObtenu
+        fields = '__all__'  # serialize all the field
+
+class DossierSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour le modèle Dossier
+    """
+    specialite = SpecialiteSerializer(read_only=True)  # Utiliser le serializer Specialite pour le champ specialite
+    diplomes_obtenus = DiplomeObtenuSerializer(many=True, read_only=True) 
+    class Meta:
+        model = Dossier
         fields = '__all__'  # serialize all the field
 
 class EleveSerializer(serializers.ModelSerializer):
