@@ -127,7 +127,7 @@ class UtilisateurView(APIView):
     """
     ViewSet pour le modèle Utilisateur
     """
-    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
+    #permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
     #serializer_class = UtilisateurSerializer 
     def get(self, request, pk=None):
         """
