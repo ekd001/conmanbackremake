@@ -13,6 +13,7 @@ from api.models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Me
 from faker import Faker
 from datetime import date
 from random import randint, choice
+from api.consts import PHASE_PRESELECTION
 
 fake = Faker()
 
@@ -201,13 +202,14 @@ def specialite_mock():
 
 def parametre_mock():
     parametres_data = [
-        {"duree_max_oisivete": 3600, "bonus_annee_bac": 2},
+        {"duree_max_oisivete": 3600, "bonus_annee_bac": 2, "phase_actuel": PHASE_PRESELECTION},
     ]
 
     for parametre in parametres_data:
         Parametre.objects.get_or_create(
             duree_max_oisivete=parametre["duree_max_oisivete"],
-            bonus_annee_bac=parametre["bonus_annee_bac"]
+            bonus_annee_bac=parametre["bonus_annee_bac"],
+            phase_actuel=parametre["phase_actuel"],
         )
     print("Les paramètres ont été ajoutés avec succès.")
 

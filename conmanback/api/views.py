@@ -21,7 +21,8 @@ from .serializers import (
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
     MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer
     )
-from .services import get_candidats_specialite
+from .services import get_candidats_specialite, generer_candidats
+from .consts import PHASE_ECRITE, PHASE_PREALABLE, PHASE_PRESELECTION, PHASE_TERMINE
 
 # Create your views here.
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -398,24 +399,6 @@ def export_database(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-
-# def create_full_eleve(request):
-#     if request.method != 'POST':
-#         return HttpResponseNotAllowed(['POST'])
-
-#     try:
-#         # Récupérer et décoder le JSON
-#         data = json.loads(request.body)
-        
-#         print("Données reçues :", data)
-
-#         # Exemple de traitement
-#         message = f"Élève {data.get('nom')} {data.get('prenom')} reçu."
-#         return JsonResponse({"message": message}, status=201)
-
-#     except json.JSONDecodeError:
-#         return JsonResponse({"error": "Données JSON invalides"}, status=400)
-
 # Adding custom View
 class EleveCreateView(APIView):
     @swagger_auto_schema(
@@ -436,3 +419,17 @@ class CandidatsParSpecialiteView(APIView):
         candidats = get_candidats_specialite(specialite)
         serializer = CandidatSerializer(candidats, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class DeliberationView(APIView):
+    def post(self, request):
+        try:
+            # phase_actuel = Parametre.objects.first().phase_actuel
+            parametre = Parametre.objects.first()
+            if parametre.phase_actuel == PHASE_PRESELECTION:
+                generer_candidats()
+                parametre.phase_actuel == PHASE_ECRITE
+                parametre.save()
+                return Response({"message": "Candidats générés avec succès."}, status=status.HTTP_201_CREATED)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

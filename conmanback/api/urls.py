@@ -4,7 +4,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     CustomTokenRefreshView,CurrentUserView, ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
     CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView, MatiereViewSet, NoteViewSet, DiplomeObtenuViewSet, SpecialiteViewSet,
-    DossierViewSet, EleveViewSet,  ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet, export_database, CandidatViewSet, EleveCreateView, CandidatsParSpecialiteView
+    DossierViewSet, EleveViewSet,  ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet, export_database, CandidatViewSet, EleveCreateView, CandidatsParSpecialiteView,
+    DeliberationView
 )
 
 """
@@ -50,4 +51,5 @@ urlpatterns = [
     path('export-database/', export_database, name="export-database"),
     path('full-eleve/', EleveCreateView.as_view(), name='eleve-create-full'),
     path('candidats/<str:specialite>/', CandidatsParSpecialiteView.as_view(), name='candidats-par-specialite'),
+    path('deliberer/', DeliberationView.as_view(), name='deliberation'),
 ]
