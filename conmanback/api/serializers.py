@@ -49,7 +49,7 @@ class UtilisateurSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Utilisateur
     """
-    profile = ProfilSerializer(read_only=True)  # Utiliser le serializer Profil pour le champ profile
+    profil = ProfilSerializer(read_only=True)  # Utiliser le serializer Profil pour le champ profile
     class Meta:
         model = Utilisateur
         fields = '__all__'  # tserialize all the field
@@ -124,6 +124,7 @@ class NoteSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Note
     """
+    matiere = MatiereSerializer(read_only=True)
     class Meta:
         model = Note
         fields = '__all__'  # serialize all the field
@@ -176,6 +177,7 @@ class CandidatSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Candidat
     """
+    eleve = EleveSerializer(read_only=True)
     class Meta:
         model = Candidat
         fields = '__all__'  # serialize all the field

@@ -21,7 +21,7 @@ from .serializers import (
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
     MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer
     )
-from .services import get_candidats_specialite, generer_candidats
+from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite
 from .consts import PHASE_ECRITE, PHASE_PREALABLE, PHASE_PRESELECTION, PHASE_TERMINE
 
 # Create your views here.
@@ -427,9 +427,18 @@ class DeliberationView(APIView):
             parametre = Parametre.objects.first()
             if parametre.phase_actuel == PHASE_PRESELECTION:
                 generer_candidats()
-                parametre.phase_actuel == PHASE_ECRITE
+                parametre.phase_actuel = PHASE_ECRITE
+                print("Phase changé")
                 parametre.save()
                 return Response({"message": "Candidats générés avec succès."}, status=status.HTTP_201_CREATED)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+class MatiereParSpecialiteView(APIView):
+    def get(self, request, specialite):
+        print("Specialite -> ",  specialite)
+        # Appeler la fonction pour récupérer les candidats
+        coeffs = get_matiere_par_specialite(specialite)
+        serializer = CoefficientMatierePhaseSerializer(coeffs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

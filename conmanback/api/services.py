@@ -11,7 +11,7 @@ from api.models import (Profil,Utilisateur, Concours, InfosGenerales, Serie, Men
     Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat,)
 from api.mocks_data import run_mock
 from datetime import date
-from api.consts import BAC1_LIBELLE, BAC2_LIBELLE
+from api.consts import BAC1_LIBELLE, BAC2_LIBELLE, PHASE_PRESELECTION
 
 def get_eleves_par_specialite():
     specialites = Specialite.objects.all()
@@ -95,6 +95,13 @@ def generer_candidats():
 
 def get_candidats_specialite(specialite):
     return Candidat.objects.filter(eleve__dossier__specialite__libelle=specialite)
+
+def get_matiere_par_specialite(specialite):
+    return CoefficientMatierePhase.objects.filter(estPreselection=Parametre.objects.first().phase_actuel == PHASE_PRESELECTION, specialite__libelle=specialite)
+
+    # if Parametre.objects.first().phase_actuel == PHASE_PRESELECTION:
+    #     return CoefficientMatierePhase.objects.filter(estPreselection=Parametre.objects.first().phase_actuel == PHASE_PRESELECTION, specialite__libelle=specialite)
+    # return Candidat.objects.filter(eleve__dossier__specialite__libelle=specialite, )
 
 def main():
     generer_candidats()
