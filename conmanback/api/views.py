@@ -19,9 +19,9 @@ from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
-    MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer
+    MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer, ArchivageSerializer
     )
-from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite, export_database
+from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite, export_database, add_notes_to_candidat
 from .consts import PHASE_ECRITE, PHASE_PREALABLE, PHASE_PRESELECTION, PHASE_TERMINE
 from django.contrib.auth.decorators import login_required
 
@@ -361,23 +361,23 @@ class CoefficientMatierePhaseViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 # Adding custom View
-# class ExportDatabaseView(APIView):
-#     permission_classes = [permissions.IsAuthenticated]
+class ExportDatabaseView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     
-#     def post(self, request):
+    def post(self, request):
 
-#         try:
-#             export_path, export_filename = export_database(request.user)
-#             # Renvoie le fichier en téléchargement
-#             return FileResponse(
-#                 open(export_path, 'rb'),
-#                 as_attachment=True,
-#                 filename=export_filename,
-#                 content_type='application/sql'
-#             )
+        try:
+            export_path, export_filename = export_database(request.user)
+            # Renvoie le fichier en téléchargement
+            return FileResponse(
+                open(export_path, 'rb'),
+                as_attachment=True,
+                filename=export_filename,
+                content_type='application/sql'
+            )
 
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=500)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
 class EleveCreateView(APIView):
     # permission_classes = [permissions.IsAuthenticated]
@@ -423,3 +423,48 @@ class MatiereParSpecialiteView(APIView):
         coeffs = get_matiere_par_specialite(specialite)
         serializer = CoefficientMatierePhaseSerializer(coeffs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class ArchivageView(APIView):
+    """
+    ViewSet pour le modèle Archivage
+    """
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
+    def get(self, request):
+        archives = Archivage.objects.all()
+        serializer = ArchivageSerializer(archives, many=True)
+        return Response(serializer.data)
+    
+
+
+class CandidatNotesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            notes_data = request.data  # Tu envoies directement une liste [{...}, {...}]
+            if not notes_data:
+                return Response({"error": "Les notes sont requises."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Valider les données
+            serializer = NoteSerializer(data=notes_data, many=True)
+            serializer.is_valid(raise_exception=True)
+
+            # Créer les instances de Note
+            notes_instances = [Note.objects.create(**data) for data in serializer.validated_data]
+
+            # # Ajouter les notes au candidat
+            # candidat = Candidat.objects.get(id_candidat=pk)
+            # candidat.notes.set(notes_instances)
+            # candidat.save()
+
+            add_notes_to_candidat(pk, notes_instances)
+
+            return Response(
+                {"message": f"{len(notes_instances)} notes ajoutées au candidat."},
+                status=status.HTTP_200_OK
+            )
+
+        except Candidat.DoesNotExist:
+            return Response({"error": "Candidat introuvable."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

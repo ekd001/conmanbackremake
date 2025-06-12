@@ -3,7 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from .models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, 
     Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Parametre, Jury, MembreJury,
-    CoefficientMatierePhase, Candidat
+    CoefficientMatierePhase, Candidat, Archivage
 )
 import datetime
 
@@ -178,6 +178,7 @@ class CandidatSerializer(serializers.ModelSerializer):
     Serializer pour le modèle Candidat
     """
     eleve = EleveSerializer(read_only=True)
+    notes = NoteSerializer(many=True, read_only=True) 
     class Meta:
         model = Candidat
         fields = '__all__'  # serialize all the field
@@ -278,3 +279,13 @@ class CustomEleveSerializer(serializers.ModelSerializer):
         # Créer l'élève
         eleve = Eleve.objects.create(dossier=dossier, **validated_data)
         return eleve
+    
+class ArchivageSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour le modèle Jury
+    """
+    auteur = UtilisateurSerializer(read_only=True)  
+    concour = ConcoursSerializer(read_only=True)
+    class Meta:
+        model = Archivage
+        fields = '__all__'  # serialize all the field

@@ -373,7 +373,7 @@ def run_mock():
 
 def main():
     run_mock()
-    # export_database()
+    export_database(None)
 
 if __name__ == '__main__':
     main()

@@ -332,13 +332,8 @@ class Archivage(models.Model):
     id_archive = models.AutoField(primary_key=True)
     fichier = models.CharField(max_length=255)
     date = models.DateField(auto_now_add=True)
-    # auteur = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, related_name="Archive")
-    # concour = models.ForeignKey(Concours, on_delete=models.SET_NULL, null=True, related_name="Archive") 
+    auteur = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, related_name="Archive")
+    concour = models.ForeignKey(Concours, on_delete=models.SET_NULL, null=True, related_name="Archive") 
 
     def __str__(self):
         return f"Archive : {self.date}"
-
-# class ExtraInformation(models.Model):
-#     """
-#     modèle représentant les informations 
-#     """

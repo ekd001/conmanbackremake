@@ -101,31 +101,44 @@ def get_candidats_specialite(specialite):
 def get_matiere_par_specialite(specialite):
     return CoefficientMatierePhase.objects.filter(estPreselection=Parametre.objects.first().phase_actuel == PHASE_PRESELECTION, specialite__libelle=specialite)
 
-# def export_database(user=Utilisateur.objects.first()):
-#     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-#     export_dir = 'archives'
-#     export_filename = f"export_{timestamp}.sql"
-#     export_path = os.path.join(export_dir, export_filename)
+def export_database(user):
+    if user is None:
+        user = Utilisateur.objects.first()
 
-#     # Crée le dossier s'il n'existe pas
-#     os.makedirs(export_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    export_dir = 'archives'
+    export_filename = f"export_{timestamp}.sql"
+    export_path = os.path.join(export_dir, export_filename)
 
-#     # Export de la base
-#     with open(export_path, 'w') as f:
-#         subprocess.run(['sqlite3', 'db.sqlite3', '.dump'], stdout=f, check=True)
+    # Crée le dossier s'il n'existe pas
+    os.makedirs(export_dir, exist_ok=True)
+
+    # Export de la base
+    with open(export_path, 'w') as f:
+        subprocess.run(['sqlite3', 'db.sqlite3', '.dump'], stdout=f, check=True)
     
-#     # Enregistre dans le modèle Archivage
-#     Archivage.objects.create(
-#         fichier=export_path,
-#         date=datetime.now(),
-#         concour=Concours.objects.first(),
-#         auteur=user
-#     )
+    # Enregistre dans le modèle Archivage
+    Archivage.objects.create(
+        fichier=export_path,
+        date=datetime.now(),
+        concour=Concours.objects.first(),
+        auteur=user
+    )
 
-#     return export_path, export_filename
+    return export_path, export_filename
 
+def add_notes_to_candidat(id_candidat, notes):
+    try:
+        candidat = Candidat.objects.get(id_candidat=id_candidat)
+        candidat.notes.set(notes)  # notes est une liste d’instances Note
+        candidat.save()
+        print(f"Candidat avec l'ID {id_candidat} mis à jour avec succès.")
+    except Candidat.DoesNotExist:
+        print(f"Aucun candidat trouvé avec l'ID {id_candidat}.")
+        
 def main():
-    generer_candidats()
+    # generer_candidats()
+    add_notes_to_candidat(1)
     # export_database()
     # print(get_candidats_specialite("Tronc Commun"))
     # print(poids_anciennete_bac2(0))
