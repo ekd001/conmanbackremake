@@ -4,8 +4,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     CustomTokenRefreshView,CurrentUserView, ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
     CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView, MatiereViewSet, NoteViewSet, DiplomeObtenuViewSet, SpecialiteViewSet,
-    DossierViewSet, EleveViewSet,  ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet, export_database, CandidatViewSet, EleveCreateView, CandidatsParSpecialiteView,
-    DeliberationView, MatiereParSpecialiteView
+    DossierViewSet, EleveViewSet,  ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet, CandidatViewSet, EleveCreateView, CandidatsParSpecialiteView,
+    DeliberationView, MatiereParSpecialiteView, ExportDatabaseView, #export_database
 )
 
 """
@@ -48,7 +48,8 @@ urlpatterns = [
     path('changer-mot-de-passe/<int:pk>/', ChangerMotDePasseView.as_view(), name="changer-mot-de-passe"),
     path('token/refresh/',CustomTokenRefreshView.as_view(),name="token-refresh"),
     path('logout/', LogoutView.as_view(), name="logout"),
-    path('export-database/', export_database, name="export-database"),
+    # path('export-database/', export_database, name="export-database"),
+    path('export-database/', ExportDatabaseView.as_view(), name="export-database"),
     path('full-eleve/', EleveCreateView.as_view(), name='eleve-create-full'),
     path('candidats/<str:specialite>/', CandidatsParSpecialiteView.as_view(), name='candidats-par-specialite'),
     path('matieres/<str:specialite>/', MatiereParSpecialiteView.as_view(), name='matiere-par-specialite'),

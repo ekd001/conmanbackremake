@@ -9,9 +9,11 @@ django.setup()
 
 from api.models import (Profil,Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
     Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat,)
-from api.mocks_data import run_mock
+# from api.mocks_data import run_mock
 from datetime import date
 from api.consts import BAC1_LIBELLE, BAC2_LIBELLE, PHASE_PRESELECTION
+from datetime import datetime
+import subprocess
 
 def get_eleves_par_specialite():
     specialites = Specialite.objects.all()
@@ -99,12 +101,32 @@ def get_candidats_specialite(specialite):
 def get_matiere_par_specialite(specialite):
     return CoefficientMatierePhase.objects.filter(estPreselection=Parametre.objects.first().phase_actuel == PHASE_PRESELECTION, specialite__libelle=specialite)
 
-    # if Parametre.objects.first().phase_actuel == PHASE_PRESELECTION:
-    #     return CoefficientMatierePhase.objects.filter(estPreselection=Parametre.objects.first().phase_actuel == PHASE_PRESELECTION, specialite__libelle=specialite)
-    # return Candidat.objects.filter(eleve__dossier__specialite__libelle=specialite, )
+# def export_database(user=Utilisateur.objects.first()):
+#     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+#     export_dir = 'archives'
+#     export_filename = f"export_{timestamp}.sql"
+#     export_path = os.path.join(export_dir, export_filename)
+
+#     # Crée le dossier s'il n'existe pas
+#     os.makedirs(export_dir, exist_ok=True)
+
+#     # Export de la base
+#     with open(export_path, 'w') as f:
+#         subprocess.run(['sqlite3', 'db.sqlite3', '.dump'], stdout=f, check=True)
+    
+#     # Enregistre dans le modèle Archivage
+#     Archivage.objects.create(
+#         fichier=export_path,
+#         date=datetime.now(),
+#         concour=Concours.objects.first(),
+#         auteur=user
+#     )
+
+#     return export_path, export_filename
 
 def main():
     generer_candidats()
+    # export_database()
     # print(get_candidats_specialite("Tronc Commun"))
     # print(poids_anciennete_bac2(0))
     # print(poids_redoublement_bac2(0, 0))

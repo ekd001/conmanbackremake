@@ -14,6 +14,7 @@ from faker import Faker
 from datetime import date
 from random import randint, choice
 from api.consts import PHASE_PRESELECTION
+from api.services import export_database
 
 fake = Faker()
 
@@ -372,6 +373,7 @@ def run_mock():
 
 def main():
     run_mock()
+    # export_database()
 
 if __name__ == '__main__':
     main()

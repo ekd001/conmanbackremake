@@ -21,8 +21,9 @@ from .serializers import (
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
     MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer
     )
-from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite
+from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite, export_database
 from .consts import PHASE_ECRITE, PHASE_PREALABLE, PHASE_PRESELECTION, PHASE_TERMINE
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -359,48 +360,28 @@ class CoefficientMatierePhaseViewSet(viewsets.ModelViewSet):
     serializer_class = CoefficientMatierePhaseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
-@csrf_exempt
-def export_database(request):
-    """
-    Exporter la base de données au format JSON
-    """
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-
-    # Chemin de sortie
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    export_dir = 'archives'
-    export_filename = f"export_{timestamp}.sql"
-    export_path = os.path.join(export_dir, export_filename)
-
-    # Crée le dossier s'il n'existe pas
-    os.makedirs(export_dir, exist_ok=True)
-
-    try:
-        # Export de la base
-        with open(export_path, 'w') as f:
-            subprocess.run(['sqlite3', 'db.sqlite3', '.dump'], stdout=f, check=True)
-
-        # Enregistre dans le modèle Archivage
-        Archivage.objects.create(
-            fichier=export_path,
-            date=datetime.now()
-        )
-
-        # Renvoie le fichier en téléchargement
-        return FileResponse(
-            open(export_path, 'rb'),
-            as_attachment=True,
-            filename=export_filename,
-            content_type='application/sql'
-        )
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
 # Adding custom View
+# class ExportDatabaseView(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
+    
+#     def post(self, request):
+
+#         try:
+#             export_path, export_filename = export_database(request.user)
+#             # Renvoie le fichier en téléchargement
+#             return FileResponse(
+#                 open(export_path, 'rb'),
+#                 as_attachment=True,
+#                 filename=export_filename,
+#                 content_type='application/sql'
+#             )
+
+#         except Exception as e:
+#             return JsonResponse({"error": str(e)}, status=500)
+
 class EleveCreateView(APIView):
+    # permission_classes = [permissions.IsAuthenticated]
+
     @swagger_auto_schema(
         request_body=CustomEleveSerializer,
         responses={201: CustomEleveSerializer}

@@ -263,24 +263,6 @@ class Candidat(models.Model):  # Ajout de models.Model
     def __str__(self):
         return f"Candidat : {self.num_table}, {self.eleve.nom}"
 
-# class Parametre(models.Model):
-#     """
-#     modèle représentant un Parametre
-#     """
-#     PHASE_CHOICES = [
-#         ('préalable', 'Préalable'),
-#         ('préselection', 'Préselection'),
-#         ('écrite', 'Écrite'),
-#         ('terminé', 'Terminé'),
-#     ]
-#     id_parametre = models.AutoField(primary_key=True)
-#     duree_max_oisivete = models.IntegerField(null=True)
-#     bonus_annee_bac = models.IntegerField(null=True)
-#     phase_actuel = models.CharField(max_length=20, choices=PHASE_CHOICES, default='préalable')
-
-#     def __str__(self):
-#         return f"Oisivete : {self.duree_max_oisivete}, Bonus Annee Bac : {self.bonus_annee_bac}"
-
 class Parametre(models.Model):
     """
     modèle représentant un Parametre
@@ -350,6 +332,8 @@ class Archivage(models.Model):
     id_archive = models.AutoField(primary_key=True)
     fichier = models.CharField(max_length=255)
     date = models.DateField(auto_now_add=True)
+    # auteur = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, related_name="Archive")
+    # concour = models.ForeignKey(Concours, on_delete=models.SET_NULL, null=True, related_name="Archive") 
 
     def __str__(self):
         return f"Archive : {self.date}"
