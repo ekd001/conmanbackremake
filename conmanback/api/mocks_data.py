@@ -13,7 +13,7 @@ from api.models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Me
 from faker import Faker
 from datetime import date
 from random import randint, choice
-from api.consts import PHASE_PRESELECTION
+from api.consts import PHASE_PRESELECTION, BAC2_LIBELLE
 from api.services import export_database
 
 fake = Faker()
@@ -302,6 +302,7 @@ def eleve_mock():
         return
 
     for _ in range(300):  # Créer 10 élèves
+        
         # Créer deux DiplomeObtenus uniques pour chaque élève
         diplome_obtenu_1 = DiplomeObtenu.objects.create(
             diplome=choice(diplomes),
@@ -313,8 +314,6 @@ def eleve_mock():
         diplome_obtenu_1.notes.add(
             Note.objects.create(matiere=Matiere.objects.filter(libelle="Français").first(), note=randint(8, 16), est_preselection=True), 
             Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais").first(), note=randint(8, 19), est_preselection=True),
-            # [
-            # ]
         )
 
         diplome_obtenu_2 = DiplomeObtenu.objects.create(
@@ -327,13 +326,27 @@ def eleve_mock():
         diplome_obtenu_2.notes.add(
             Note.objects.create(matiere=Matiere.objects.filter(libelle="Français").first(), note=randint(8, 16), est_preselection=True), 
             Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais").first(), note=randint(8, 19), est_preselection=True),
-            # [
-            # ]
         )
+
+        diplome_obtenu_3 = DiplomeObtenu.objects.create(
+            diplome=Diplome.objects.get(libelle=BAC2_LIBELLE),
+            serie=choice(series),
+            pays=choice(pays),
+            mention=choice(mentions),
+            annee=fake.date_between(start_date="-10y", end_date="today")
+        )
+        specialite = choice(specialites)
+        coeff_mats = CoefficientMatierePhase.objects.filter(specialite=specialite)
+        for coeff_mat in coeff_mats:
+            diplome_obtenu_3.notes.add(Note.objects.create(matiere=coeff_mat.matiere, note=randint(8, 16), est_preselection=True), )
+        # diplome_obtenu_3.notes.add(
+        #     Note.objects.create(matiere=Matiere.objects.filter(libelle="Français").first(), note=randint(8, 16), est_preselection=True), 
+        #     Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais").first(), note=randint(8, 19), est_preselection=True),
+        # )
 
         # Créer un Dossier unique pour chaque élève
         dossier = Dossier.objects.create(
-            specialite=choice(specialites),
+            specialite=specialite,
             date_inscription=fake.date_between(start_date="-6w", end_date="today")
         )
         dossier.diplomes_obtenus.add(diplome_obtenu_1, diplome_obtenu_2)
@@ -352,7 +365,7 @@ def eleve_mock():
             addresse=fake.address()
         )
 
-    print("50 élèves ont été créés avec succès.")
+    # print("50 élèves ont été créés avec succès.")
 
 def run_mock():
     concours_mock()
@@ -373,7 +386,7 @@ def run_mock():
 
 def main():
     run_mock()
-    export_database(None)
+    # export_database(None)
 
 if __name__ == '__main__':
     main()

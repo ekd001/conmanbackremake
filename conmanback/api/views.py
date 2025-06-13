@@ -380,8 +380,7 @@ class ExportDatabaseView(APIView):
             return JsonResponse({"error": str(e)}, status=500)
 
 class EleveCreateView(APIView):
-    # permission_classes = [permissions.IsAuthenticated]
-
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
     @swagger_auto_schema(
         request_body=CustomEleveSerializer,
         responses={201: CustomEleveSerializer}
@@ -394,6 +393,7 @@ class EleveCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class CandidatsParSpecialiteView(APIView):
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
     def get(self, request, specialite):
         print("Specialite -> ",  specialite)
         # Appeler la fonction pour récupérer les candidats
@@ -401,7 +401,17 @@ class CandidatsParSpecialiteView(APIView):
         serializer = CandidatSerializer(candidats, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class CandidatSelectionneView(APIView):
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
+    def get(self, request, pk):
+        # print("Specialite -> ",  specialite)
+        # Appeler la fonction pour récupérer les candidats
+        candidats = Candidat.objects.filter(reussite=True, eleve__dossier__specialite__id_specialite=pk)
+        serializer = CandidatSerializer(candidats, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class DeliberationView(APIView):
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
     def post(self, request):
         try:
             # phase_actuel = Parametre.objects.first().phase_actuel
@@ -417,6 +427,7 @@ class DeliberationView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class MatiereParSpecialiteView(APIView):
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
     def get(self, request, specialite):
         print("Specialite -> ",  specialite)
         # Appeler la fonction pour récupérer les candidats
@@ -434,8 +445,22 @@ class ArchivageView(APIView):
         serializer = ArchivageSerializer(archives, many=True)
         return Response(serializer.data)
     
+class TelechargerArchiveView(APIView):
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
+    def get(self, request, pk):
+        archive = Archivage.objects.get(id_archive=pk)
+        # serializer = ArchivageSerializer(archives, many=True)
+        try:
+            return FileResponse(
+                open(str(archive.fichier), 'rb'),
+                as_attachment=True,
+                filename=archive.fichier,
+                content_type='application/sql'
+            )
 
-
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    
 class CandidatNotesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -451,11 +476,6 @@ class CandidatNotesView(APIView):
 
             # Créer les instances de Note
             notes_instances = [Note.objects.create(**data) for data in serializer.validated_data]
-
-            # # Ajouter les notes au candidat
-            # candidat = Candidat.objects.get(id_candidat=pk)
-            # candidat.notes.set(notes_instances)
-            # candidat.save()
 
             add_notes_to_candidat(pk, notes_instances)
 

@@ -259,6 +259,8 @@ class Candidat(models.Model):  # Ajout de models.Model
     num_table = models.CharField(max_length=4, null=True)
     eleve = models.OneToOneField(Eleve, on_delete=models.SET_NULL, null=True, related_name="candidat")  # Relation one-to-one
     notes = models.ManyToManyField(Note, related_name="Candidat")  # Many-to-Many relation
+    moyenne = models.DecimalField(max_digits=6, decimal_places=4, default=0)
+    reussite = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Candidat : {self.num_table}, {self.eleve.nom}"
@@ -331,7 +333,7 @@ class Archivage(models.Model):
     """
     id_archive = models.AutoField(primary_key=True)
     fichier = models.CharField(max_length=255)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
     auteur = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, related_name="Archive")
     concour = models.ForeignKey(Concours, on_delete=models.SET_NULL, null=True, related_name="Archive") 
 

@@ -5,7 +5,7 @@ from .views import (
     CustomTokenRefreshView,CurrentUserView, ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
     CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView, MatiereViewSet, NoteViewSet, DiplomeObtenuViewSet, SpecialiteViewSet,
     DossierViewSet, EleveViewSet,  ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet, CandidatViewSet, EleveCreateView, CandidatsParSpecialiteView,
-    DeliberationView, MatiereParSpecialiteView, ExportDatabaseView, ArchivageView, CandidatNotesView, #export_database
+    DeliberationView, MatiereParSpecialiteView, ExportDatabaseView, ArchivageView, CandidatNotesView, TelechargerArchiveView, CandidatSelectionneView, #export_database
 )
 
 """
@@ -51,8 +51,10 @@ urlpatterns = [
     path('export-database/', ExportDatabaseView.as_view(), name="export-database"),
     path('full-eleve/', EleveCreateView.as_view(), name='eleve-create-full'),
     path('candidats/<str:specialite>/', CandidatsParSpecialiteView.as_view(), name='candidats-par-specialite'),
+    path('selectionne/<int:pk>/', CandidatSelectionneView.as_view(), name='candidats-selectionnes'),
     path('matieres/<str:specialite>/', MatiereParSpecialiteView.as_view(), name='matiere-par-specialite'),
     path('deliberer/', DeliberationView.as_view(), name='deliberation'),
     path('archives/', ArchivageView.as_view(), name='archives'),
     path('candidat-notes/<int:pk>/', CandidatNotesView.as_view(), name='candidat-notes'),
+    path('archive/<int:pk>/', TelechargerArchiveView.as_view(), name='telecharger-archive'),
 ]
