@@ -296,6 +296,11 @@ def eleve_mock():
     diplomes = Diplome.objects.all()
     series = Serie.objects.all()
     mentions = Mention.objects.all()
+    # bac2_diplome
+    for diplome in diplomes:
+        if diplome.libelle == BAC2_LIBELLE:
+            bac2_diplome = diplome
+
 
     if not (specialites.exists() and pays.exists() and diplomes.exists() and series.exists() and mentions.exists()):
         print("Veuillez d'abord exécuter les mocks pour Specialite, Pays, Diplome, Serie et Mention.")
@@ -328,17 +333,18 @@ def eleve_mock():
             Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais").first(), note=randint(8, 19), est_preselection=True),
         )
 
-        diplome_obtenu_3 = DiplomeObtenu.objects.create(
-            diplome=Diplome.objects.get(libelle=BAC2_LIBELLE),
-            serie=choice(series),
-            pays=choice(pays),
-            mention=choice(mentions),
-            annee=fake.date_between(start_date="-10y", end_date="today")
-        )
+        # diplome_obtenu_3 = DiplomeObtenu.objects.create(
+        #     diplome=choice(diplomes),
+        #     # diplome=bac2_diplome,
+        #     serie=choice(series),
+        #     pays=choice(pays),
+        #     mention=choice(mentions),
+        #     annee=fake.date_between(start_date="-10y", end_date="today")
+        # )
         specialite = choice(specialites)
-        coeff_mats = CoefficientMatierePhase.objects.filter(specialite=specialite)
-        for coeff_mat in coeff_mats:
-            diplome_obtenu_3.notes.add(Note.objects.create(matiere=coeff_mat.matiere, note=randint(8, 16), est_preselection=True), )
+        # coeff_mats = CoefficientMatierePhase.objects.filter(specialite=specialite)
+        # for coeff_mat in coeff_mats:
+        #     diplome_obtenu_3.notes.add(Note.objects.create(matiere=coeff_mat.matiere, note=randint(8, 16), est_preselection=True), )
         # diplome_obtenu_3.notes.add(
         #     Note.objects.create(matiere=Matiere.objects.filter(libelle="Français").first(), note=randint(8, 16), est_preselection=True), 
         #     Note.objects.create(matiere=Matiere.objects.filter(libelle="Anglais").first(), note=randint(8, 19), est_preselection=True),

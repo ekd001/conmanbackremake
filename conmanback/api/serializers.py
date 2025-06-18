@@ -45,23 +45,57 @@ class ProfilSerializer(serializers.ModelSerializer):
         fields = '__all__'  # serialize all the field
 
 
+# class UtilisateurSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer pour le modèle Utilisateur
+#     """
+#     profil = ProfilSerializer(read_only=True)  # Utiliser le serializer Profil pour le champ profile
+#     class Meta:
+#         model = Utilisateur
+#         fields = '__all__'  # tserialize all the field
+#         extra_kwargs = {'password': {'write_only': True}
+#         }
+    
+#     def create(self, validated_data):
+#         """
+#         Override la méthode create pour hasher le mot de passe avant de sauvegarder l'utilisateur
+#         """
+#         user = Utilisateur.objects.create_user(**validated_data)
+#         return user
+
 class UtilisateurSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Utilisateur
     """
-    profil = ProfilSerializer(read_only=True)  # Utiliser le serializer Profil pour le champ profile
+    profil = serializers.PrimaryKeyRelatedField(
+        queryset=Profil.objects.all(),
+        write_only=True
+    )
+    profil_details = ProfilSerializer(source='profil', read_only=True)
+
     class Meta:
         model = Utilisateur
-        fields = '__all__'  # tserialize all the field
-        extra_kwargs = {'password': {'write_only': True}
+        fields = [
+            'id',
+            'nom',
+            'prenom',
+            'email',
+            'telephone',
+            'code_access',
+            'password',
+            'profil',          # pour POST (envoi id)
+            'profil_details'   # pour GET (lecture profil complet)
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True}
         }
-    
+
     def create(self, validated_data):
         """
-        Override la méthode create pour hasher le mot de passe avant de sauvegarder l'utilisateur
+        Utilise le manager personnalisé pour créer un utilisateur
         """
-        user = Utilisateur.objects.create_user(**validated_data)
-        return user
+        return Utilisateur.objects.create_user(**validated_data)
+
        
 
 class ConcoursSerializer(serializers.ModelSerializer):
@@ -120,16 +154,34 @@ class MatiereSerializer(serializers.ModelSerializer):
         model = Matiere
         fields = '__all__'  # serialize all the field
 
+# class NoteSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer pour le modèle Note
+#     """
+#     matiere = MatiereSerializer(read_only=True)
+#     class Meta:
+#         model = Note
+#         fields = '__all__'  # serialize all the field
+
 class NoteSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Note
     """
-    matiere = MatiereSerializer(read_only=True)
+    matiere = serializers.PrimaryKeyRelatedField(
+        queryset=Matiere.objects.all(),
+        write_only=True
+    )
+    matiere_details = MatiereSerializer(source='matiere', read_only=True)
+
     class Meta:
         model = Note
-        fields = '__all__'  # serialize all the field
-        
-
+        fields = [
+            'id_note',
+            'note',
+            'est_preselection',
+            'matiere',         # pour POST (envoi ID)
+            'matiere_details'  # pour GET (lecture objet)
+        ]
                 
 class SpecialiteSerializer(serializers.ModelSerializer):
     """
@@ -140,18 +192,45 @@ class SpecialiteSerializer(serializers.ModelSerializer):
         fields = '__all__'  # serialize all the field
                         
 
+# class DiplomeObtenuSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer pour le modèle Diplome Obtenu
+#     """
+#     diplome = DiplomeSerializer(read_only=True) 
+#     serie = SerieSerializer(read_only=True)
+#     pays = PaysSerializer(read_only=True)
+#     mention = MentionSerializer(read_only=True)
+#     notes = NoteSerializer(many=True, read_only=True)
+#     class Meta:
+#         model = DiplomeObtenu
+#         fields = '__all__'  # serialize all the field
+
 class DiplomeObtenuSerializer(serializers.ModelSerializer):
-    """
-    Serializer pour le modèle Diplome Obtenu
-    """
-    diplome = DiplomeSerializer(read_only=True) 
-    serie = SerieSerializer(read_only=True)
-    pays = PaysSerializer(read_only=True)
-    mention = MentionSerializer(read_only=True)
-    notes = NoteSerializer(many=True, read_only=True)
+    # Champs en écriture via ID
+    diplome = serializers.PrimaryKeyRelatedField(queryset=Diplome.objects.all(), write_only=True)
+    serie = serializers.PrimaryKeyRelatedField(queryset=Serie.objects.all(), write_only=True)
+    pays = serializers.PrimaryKeyRelatedField(queryset=Pays.objects.all(), write_only=True)
+    mention = serializers.PrimaryKeyRelatedField(queryset=Mention.objects.all(), write_only=True)
+    notes = serializers.PrimaryKeyRelatedField(queryset=Note.objects.all(), many=True, write_only=True)
+
+    # Champs en lecture (objets complets)
+    diplome_details = DiplomeSerializer(source="diplome", read_only=True)
+    serie_details = SerieSerializer(source="serie", read_only=True)
+    pays_details = PaysSerializer(source="pays", read_only=True)
+    mention_details = MentionSerializer(source="mention", read_only=True)
+    notes_details = NoteSerializer(source="notes", many=True, read_only=True)
+
     class Meta:
         model = DiplomeObtenu
-        fields = '__all__'  # serialize all the field
+        fields = [
+            'id_diplome_obtenu',
+            'annee',
+            'diplome', 'diplome_details',
+            'serie', 'serie_details',
+            'pays', 'pays_details',
+            'mention', 'mention_details',
+            'notes', 'notes_details'
+        ]
 
 class DossierSerializer(serializers.ModelSerializer):
     """
@@ -199,37 +278,78 @@ class JurySerializer(serializers.ModelSerializer):
         model = Jury
         fields = '__all__'  # serialize all the field
                                          
+# class MembreJurySerializer(serializers.ModelSerializer):
+#     """
+#     Serializer pour le modèle Jury
+#     """
+#     jury = JurySerializer(read_only=True)  
+#     class Meta:
+#         model = MembreJury
+#         fields = '__all__'  # serialize all the field
+
 class MembreJurySerializer(serializers.ModelSerializer):
     """
-    Serializer pour le modèle Jury
+    Serializer pour le modèle MembreJury
     """
-    jury = JurySerializer(read_only=True)  
+    jury = serializers.PrimaryKeyRelatedField(
+        queryset=Jury.objects.all(),
+        write_only=True
+    )
+    jury_details = JurySerializer(source='jury', read_only=True)
+    
     class Meta:
         model = MembreJury
-        fields = '__all__'  # serialize all the field
-                                                 
+        fields = ['id_membre', 'nom', 'prenom', 'jury', 'jury_details']
+                              
+# class CoefficientMatierePhaseSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer pour le modèle CoefficientMatierePhase
+#     """
+#     specialite = SpecialiteSerializer(read_only=True)
+#     matiere = MatiereSerializer(read_only=True)
+#     class Meta:
+#         model = CoefficientMatierePhase
+#         fields = '__all__'  # serialize all the field
+
 class CoefficientMatierePhaseSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle CoefficientMatierePhase
     """
-    specialite = SpecialiteSerializer(read_only=True)
-    matiere = MatiereSerializer(read_only=True)
+    specialite = serializers.PrimaryKeyRelatedField(
+        queryset=Specialite.objects.all(),
+        write_only=True
+    )
+    matiere = serializers.PrimaryKeyRelatedField(
+        queryset=Matiere.objects.all(),
+        write_only=True
+    )
+    specialite_details = SpecialiteSerializer(source='specialite', read_only=True)
+    matiere_details = MatiereSerializer(source='matiere', read_only=True)
+
     class Meta:
         model = CoefficientMatierePhase
-        fields = '__all__'  # serialize all the field
-        
+        fields = [
+            'id_coeffmp',  # ou 'id_coefficient' selon ton modèle
+            'coefficient',
+            'estPreselection',
+            'specialite',         # pour POST (id)
+            'matiere',            # pour POST (id)
+            'specialite_details', # pour GET (objet)
+            'matiere_details'     # pour GET (objet)
+        ]
+
 # Adding custom serializers
 class CustomNoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
-        fields = ['matiere', 'note', 'est_preselection']
+        fields = ['id_note', 'matiere', 'note', 'est_preselection']
 
 class CustomDiplomeObtenuSerializer(serializers.ModelSerializer):
     notes = CustomNoteSerializer(many=True)
 
     class Meta:
         model = DiplomeObtenu
-        fields = ['diplome', 'serie', 'pays', 'mention', 'annee', 'notes']
+        fields = ['id_diplome_obtenu', 'diplome', 'serie', 'pays', 'mention', 'annee', 'notes']
 
     def create(self, validated_data):
         # Extraire les données des notes
@@ -249,14 +369,14 @@ class CustomDossierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dossier
-        fields = ['specialite', 'date_inscription', 'diplomes_obtenus']
+        fields = ['id_dossier', 'specialite', 'date_inscription', 'diplomes_obtenus']
 
 class CustomEleveSerializer(serializers.ModelSerializer):
     dossier = CustomDossierSerializer()
 
     class Meta:
         model = Eleve
-        fields = ['nom', 'prenom', 'sexe', 'date_naissance', 'lieu_naissance', 'pays_naissance', 'telephone', 'email', 'addresse', 'dossier']
+        fields = ['id_eleve', 'nom', 'prenom', 'sexe', 'date_naissance', 'lieu_naissance', 'pays_naissance', 'telephone', 'email', 'addresse', 'dossier']
 
     def create(self, validated_data):
         dossier_data = validated_data.pop('dossier')

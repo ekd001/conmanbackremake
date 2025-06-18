@@ -261,6 +261,7 @@ class Candidat(models.Model):  # Ajout de models.Model
     notes = models.ManyToManyField(Note, related_name="Candidat")  # Many-to-Many relation
     moyenne = models.DecimalField(max_digits=6, decimal_places=4, default=0)
     reussite = models.BooleanField(default=False)
+    a_toutes_les_notes = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Candidat : {self.num_table}, {self.eleve.nom}"

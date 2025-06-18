@@ -21,7 +21,7 @@ from .serializers import (
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
     MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer, ArchivageSerializer
     )
-from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite, export_database, add_notes_to_candidat
+from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite, export_database, add_notes_to_candidat, deliberer_phase_ecrite
 from .consts import PHASE_ECRITE, PHASE_PREALABLE, PHASE_PRESELECTION, PHASE_TERMINE
 from django.contrib.auth.decorators import login_required
 
@@ -394,10 +394,10 @@ class EleveCreateView(APIView):
     
 class CandidatsParSpecialiteView(APIView):
     permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
-    def get(self, request, specialite):
-        print("Specialite -> ",  specialite)
+    def get(self, request, pk):
+        # print("Specialite -> ",  specialite)
         # Appeler la fonction pour récupérer les candidats
-        candidats = get_candidats_specialite(specialite)
+        candidats = get_candidats_specialite(pk)
         serializer = CandidatSerializer(candidats, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -422,6 +422,13 @@ class DeliberationView(APIView):
                 print("Phase changé")
                 parametre.save()
                 return Response({"message": "Candidats générés avec succès."}, status=status.HTTP_201_CREATED)
+
+            if parametre.phase_actuel == PHASE_ECRITE:
+                deliberer_phase_ecrite()
+                parametre.phase_actuel = PHASE_TERMINE
+                parametre.save()
+                return Response({"message": "Candidats générés avec succès."}, status=status.HTTP_201_CREATED)
+
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

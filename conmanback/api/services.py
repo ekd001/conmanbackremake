@@ -134,8 +134,8 @@ def generer_candidats(poids_min=10):
                 num_table += 1
                 print("Candidat créer !")
 
-def get_candidats_specialite(specialite):
-    return Candidat.objects.filter(eleve__dossier__specialite__libelle=specialite)
+def get_candidats_specialite(pk):
+    return Candidat.objects.filter(eleve__dossier__specialite__id_specialite=pk)
 
 # def get_candidats_selectionne(specialite):
 #     return Candidat.objects.filter(reussite=True)
@@ -170,12 +170,24 @@ def export_database(user):
 
     return export_path, export_filename
 
+def a_toutes_les_notes(notes, specialite):
+    cmps = get_matiere_par_specialite(specialite)
+    for cmp in cmps:
+        finded = False
+        for note in notes:
+            if note.matiere == cmp.matiere:
+                finded = True
+                break
+        if not finded:
+            return False
+    return True
+
 def add_notes_to_candidat(id_candidat, notes):
     try:
         candidat = Candidat.objects.get(id_candidat=id_candidat)
         candidat.notes.set(notes)  # notes est une liste d’instances Note
+        candidat.a_toutes_les_notes = a_toutes_les_notes(notes, candidat.eleve.dossier.specialite)
         candidat.save()
-        # print(f"Candidat avec l'ID {id_candidat} mis à jour avec succès.")
     except Candidat.DoesNotExist:
         print(f"Aucun candidat trouvé avec l'ID {id_candidat}.")
 
