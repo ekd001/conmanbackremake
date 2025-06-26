@@ -3,7 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from .models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, 
     Matiere, Note, DiplomeObtenu, Specialite, Dossier, Eleve, Parametre, Jury, MembreJury,
-    CoefficientMatierePhase, Candidat, Archivage
+    CoefficientMatierePhase, Candidat, Archivage, Fonctionnalite
 )
 import datetime
 
@@ -63,6 +63,15 @@ class ProfilSerializer(serializers.ModelSerializer):
 #         user = Utilisateur.objects.create_user(**validated_data)
 #         return user
 
+
+class FonctionnalitesSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour le modèle Concours
+    """
+    class Meta:
+        model = Fonctionnalite
+        fields = '__all__'  # serialize all the field
+
 class UtilisateurSerializer(serializers.ModelSerializer):
     """
     Serializer pour le modèle Utilisateur
@@ -73,6 +82,12 @@ class UtilisateurSerializer(serializers.ModelSerializer):
     )
     profil_details = ProfilSerializer(source='profil', read_only=True)
 
+    fonctionnalite = serializers.PrimaryKeyRelatedField(
+        queryset=Fonctionnalite.objects.all(),
+        write_only=True
+    )
+    fonctionnalite_details = FonctionnalitesSerializer(source='fonctionnalite', read_only=True)
+
     class Meta:
         model = Utilisateur
         fields = [
@@ -81,6 +96,8 @@ class UtilisateurSerializer(serializers.ModelSerializer):
             'prenom',
             'email',
             'telephone',
+            'fonctionnalite',
+            'fonctionnalite_details',
             'code_access',
             'password',
             'profil',          # pour POST (envoi id)
@@ -95,8 +112,6 @@ class UtilisateurSerializer(serializers.ModelSerializer):
         Utilise le manager personnalisé pour créer un utilisateur
         """
         return Utilisateur.objects.create_user(**validated_data)
-
-       
 
 class ConcoursSerializer(serializers.ModelSerializer):
     """

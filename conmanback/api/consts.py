@@ -1,8 +1,16 @@
 
-PHASE_PRESELECTION = "préselection"
-PHASE_PREALABLE = "préalable"
-PHASE_ECRITE = "écrite"
-PHASE_TERMINE = "terminé"
+PHASE_PRESELECTION = "Préselection"
+PHASE_PREALABLE = "Préalable"
+PHASE_ECRITE = "Écrite"
+PHASE_TERMINE = "Terminé"
 
 BAC2_LIBELLE = "Baccalauréat Deuxième Partie"
 BAC1_LIBELLE = "Baccalauréat Première Partie"
+
+FONCTIONNALITE_DASHBOARD = "Dashboard"
+FONCTIONNALITE_CONFIGURATIONS = "Configurations"
+FONCTIONNALITE_UTILISATEURS = "Utilisateurs"
+FONCTIONNALITE_SAISIE = "Saisie"
+FONCTIONNALITE_TRAITEMENTS = "Traitements"
+FONCTIONNALITE_RESULTATS = "Résultats"
+FONCTIONNALITE_ARCHIVES = "Archives"

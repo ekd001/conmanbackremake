@@ -9,11 +9,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'conmanback.settings')  # Rempla
 django.setup()
 
 from api.models import (Profil, Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
-    Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat,)
+    Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat, Fonctionnalite,)
 from faker import Faker
 from datetime import date
 from random import randint, choice
-from api.consts import PHASE_PRESELECTION, BAC2_LIBELLE
+from api.consts import *
 from api.services import export_database
 
 fake = Faker()
@@ -113,6 +113,34 @@ def pays_mock():
         {"nom_pays": "Kenya", "code_pays": "KE", "nationalite": "Kényane", "indicatif": "+254"},
     ]
 
+    # pays_data = [
+    #     {"nuPays":"4","nom_pays":"AFGHANISTAN","nationalite":"AFGHAN","code_pays":"AF","indicatif":"93"},
+    #     {"nuPays":"8","nom_pays":"ALBANIE","nationalite":"ALBANAIS","code_pays":"AL","indicatif":"355"},
+    #     {"nuPays":"10","nom_pays":"ANTARCTIQUE","nationalite":"ANTARCTIQUE","code_pays":"AQ","indicatif":"672"},
+    #     {"nuPays":"12","nom_pays":"ALGERIE","nationalite":"ALGERIEN","code_pays":"DZ","indicatif":"213"},
+    #     {"nuPays":"16","nom_pays":"SAMOA AMERICAINES","nationalite":"AMERICAIN SAMOA","code_pays":"AS","indicatif":"684"},
+    #     {"nuPays":"20","nom_pays":"ANDORRE","nationalite":"ANDORRAN","code_pays":"AD","indicatif":"376"},
+    #     {"nuPays":"24","nom_pays":"ANGOLA","nationalite":"ANGOLAIS","code_pays":"AO","indicatif":"244"},
+    #     {"nuPays":"28","nom_pays":"ANTIGUA BARBUDA","nationalite":"ANTIGUAN","code_pays":"AG","indicatif":"1"},
+    #     {"nuPays":"31","nom_pays":"AZERBAIDJAN","nationalite":"AZERI","code_pays":"AZ","indicatif":"994"},
+    #     {"nuPays":"32","nom_pays":"ARGENTINE","nationalite":"ARGENTIN","code_pays":"AR","indicatif":"54"},
+    #     {"nuPays":"36","nom_pays":"AUSTRALIE","nationalite":"AUSTRALIEN","code_pays":"AU","indicatif":"61"},
+    #     {"nuPays":"40","nom_pays":"AUTRICHE","nationalite":"AUTRICHIEN","code_pays":"AT","indicatif":"43"},
+    #     {"nuPays":"44","nom_pays":"BAHAMAS","nationalite":"BAHAMIEN","code_pays":"BS","indicatif":"1"},
+    #     {"nuPays":"48","nom_pays":"BAHREIN","nationalite":"BAHRANI","code_pays":"BH","indicatif":"973"},
+    #     {"nuPays":"50","nom_pays":"BANGLADESH","nationalite":"BANGLADESHI","code_pays":"BD","indicatif":"880"},
+    #     {"nuPays":"51","nom_pays":"ARMENIE","nationalite":"ARMENIEN","code_pays":"AM","indicatif":"374"},
+    #     {"nuPays":"52","nom_pays":"BARBADE","nationalite":"BARBADIEN","code_pays":"BB","indicatif":"1"},
+    #     {"nuPays":"56","nom_pays":"BELGIQUE","nationalite":"BELGE","code_pays":"BE","indicatif":"32"},
+    #     {"nuPays":"60","nom_pays":"BERMUDES","nationalite":"BRITANIQUE BERMUDES","code_pays":"BM","indicatif":"1"},
+    #     {"nuPays":"64","nom_pays":"BHOUTAN","nationalite":"BHOUTANIEN","code_pays":"BT","indicatif":"975"},
+    #     {"nuPays":"68","nom_pays":"BOLIVIE","nationalite":"BOLIVIEN","code_pays":"BO","indicatif":"591"},
+    #     {"nuPays":"70","nom_pays":"BOSNIE-HERZEGOVINE","nationalite":"BOSNIAQUE","code_pays":"BA","indicatif":"387"},
+    #     {"nuPays":"72","nom_pays":"BOTSWANA","nationalite":"BOTSOWANIEN","code_pays":"BW","indicatif":"267"},
+    #     {"nuPays":"74","nom_pays":"ILE BOUVET","nationalite":"NORVEGIEN","code_pays":"BV","indicatif":"55"},
+    #     {"nuPays":"76","nom_pays":"BRESIL","nationalite":"BRESILIEN","code_pays":"BR","indicatif":"55"}
+    # ]
+
     for pays in pays_data:
         Pays.objects.get_or_create(
             nom_pays=pays["nom_pays"],
@@ -123,31 +151,56 @@ def pays_mock():
     print("Les pays ont été ajoutés avec succès.")
 
 def serie_mock():
+    # series_data = [
+    #     {"libelle": "Scientifique", "code":""},
+    #     {"libelle": "Littéraire", "code":""},
+    #     {"libelle": "Économique et Social", "code":""},
+    #     {"libelle": "Technologique", "code":""},
+    #     {"libelle": "Professionnelle", "code":""},
+    #     {"libelle": "Mathématiques", "code":""},
+    #     {"libelle": "Physique-Chimie", "code":""},
+    #     {"libelle": "Biologie", "code":""},
+    #     {"libelle": "Informatique", "code":""},
+    #     {"libelle": "Génie Civil", "code":""},
+    #     {"libelle": "Génie Électrique", "code":""},
+    #     {"libelle": "Génie Mécanique", "code":""},
+    #     {"libelle": "Arts Plastiques", "code":""},
+    #     {"libelle": "Musique", "code":""},
+    #     {"libelle": "Sport", "code":""},
+    #     {"libelle": "Langues Étrangères", "code":""},
+    #     {"libelle": "Histoire-Géographie", "code":""}
+    #     {"libelle": "Philosophie", "code":""},
+    #     {"libelle": "Gestion et Comptabilité", "code":""},
+    #     {"libelle": "Marketing", "code":""},
+    # ]
+
     series_data = [
-        {"libelle": "Scientifique"},
-        {"libelle": "Littéraire"},
-        {"libelle": "Économique et Social"},
-        {"libelle": "Technologique"},
-        {"libelle": "Professionnelle"},
-        {"libelle": "Mathématiques"},
-        {"libelle": "Physique-Chimie"},
-        {"libelle": "Biologie"},
-        {"libelle": "Informatique"},
-        {"libelle": "Génie Civil"},
-        {"libelle": "Génie Électrique"},
-        {"libelle": "Génie Mécanique"},
-        {"libelle": "Arts Plastiques"},
-        {"libelle": "Musique"},
-        {"libelle": "Sport"},
-        {"libelle": "Langues Étrangères"},
-        {"libelle": "Histoire-Géographie"},
-        {"libelle": "Philosophie"},
-        {"libelle": "Gestion et Comptabilité"},
-        {"libelle": "Marketing"},
+        {"code":"A1","libelle":"Lettres-mathématiques","points":"25","lstModel":"2"},
+        {"code":"A2","libelle":"Lettres-langues","points":"25","lstModel":"2"},
+        {"code":"A3","libelle":"Lettre-Arts","points":"25","lstModel":"2"},
+        {"code":"A4","libelle":"Langues-mathématiques","points":"25","lstModel":"2"},
+        {"code":"A5","libelle":"Langues","points":"25","lstModel":"2"},
+        {"code":"B","libelle":"Economique et social","points":"25","lstModel":""},
+        {"code":"BG","libelle":"BG","points":"10","lstModel":""},
+        {"code":"BTC","libelle":"Brevet de technicien C","points":"10","lstModel":""},
+        {"code":"BTG","libelle":"Brevet de technicien G","points":"10","lstModel":""},
+        {"code":"BTM","libelle":"Brevet de technicien M","points":"10","lstModel":""},
+        {"code":"C","libelle":"Mathématiques et sciences physiques","points":"10","lstModel":"1"},
+        {"code":"D","libelle":"Mathématiques et sciences de la nature","points":"10","lstModel":"1"},
+        {"code":"E","libelle":"Mathématiques et techniques","points":"10","lstModel":"1"},
+        {"code":"F1","libelle":"Construction mécanique","points":"10","lstModel":"1"},
+        {"code":"F2","libelle":"Electronique","points":"10","lstModel":"1"},
+        {"code":"F3","libelle":"Electrotechnique","points":"10","lstModel":"1"},
+        {"code":"F4","libelle":"Génie civil","points":"10","lstModel":""},
+        {"code":"G1","libelle":"Techniques administratives","points":"25","lstModel":"2"},
+        {"code":"G2","libelle":"Techniques quantitatives de gestion","points":"10","lstModel":""},
+        {"code":"G3","libelle":"Techniques commerciales","points":"10","lstModel":""},
+        {"code":"S","libelle":"Scientifique - Sciences de l'ingénieur","points":"10","lstModel":""},
+        {"code":"Ti","libelle":"Techniques industruelles","points":"10","lstModel":"1"}
     ]
 
     for serie in series_data:
-        Serie.objects.get_or_create(libelle=serie["libelle"])
+        Serie.objects.get_or_create(libelle=serie["libelle"], code=serie["code"])
     print("Les séries ont été ajoutées avec succès.")
 
 
@@ -173,12 +226,23 @@ def mention_mock():
     print("Les mentions ont été ajoutées avec succès.")
 
 def matiere_mock():
+    # matieres_data = [
+    #     {"libelle": "Mathématiques", "abreviation": "MTH"},
+    #     {"libelle": "Physiques", "abreviation": "PHY"},
+    #     {"libelle": "Français", "abreviation": "FR"},
+    #     {"libelle": "Culture Générale", "abreviation": "CG"},
+    #     {"libelle": "Anglais", "abreviation": "ANG"},
+    # ]
     matieres_data = [
-        {"libelle": "Mathématiques", "abreviation": "MTH"},
-        {"libelle": "Physiques", "abreviation": "PHY"},
-        {"libelle": "Français", "abreviation": "FR"},
-        {"libelle": "Culture Générale", "abreviation": "CG"},
-        {"libelle": "Anglais", "abreviation": "ANG"},
+        {"nuMat":"10","libelle":"Mathématiques","abreviation":"MTH","dmnsn":"null"},
+        {"nuMat":"20","libelle":"Physiques","abreviation":"PHY","dmnsn":"null"},
+        {"nuMat":"30","libelle":"Français","abreviation":"FR","dmnsn":"*"},
+        {"nuMat":"33","libelle":"Culture générale","abreviation":"CG","dmnsn":"null"},
+        {"nuMat":"40","libelle":"Anglais","abreviation":"ANG","dmnsn":"1"},
+        {"nuMat":"50","libelle":"3e langue\/Étude de cas","abreviation":"3L_EC","dmnsn":"1"},
+        {"nuMat":"60","libelle":"Tests Pyschotechniques","abreviation":"TPsych","dmnsn":"2"},
+        {"nuMat":"91","libelle":"Bac 1 dans le dossier","abreviation":"SsBac1","dmnsn":"1"},
+        {"nuMat":"93","libelle":"Etudes Universitaires","abreviation":"ETUNIV","dmnsn":"0"}
     ]
 
     for matiere in matieres_data:
@@ -274,6 +338,8 @@ def coefficient_matiere_phase_mock():
 
 def diplome_mock():
     diplomes_data = [
+        {"libelle": "Certificat d'Etude du Premier Degré", "abreviation": "CEPD"},
+        {"libelle": "Brevet d'Etude du Premier Cycle", "abreviation": "BEPC"},
         {"libelle": "Baccalauréat Première Partie", "abreviation": "BAC 1"},
         {"libelle": "Baccalauréat Deuxième Partie", "abreviation": "BAC 2"},
         {"libelle": "Brevet de Technicien Supérieur", "abreviation": "BTS"},
@@ -289,6 +355,23 @@ def diplome_mock():
             abreviation=diplome["abreviation"]
         )
     print("Les diplômes ont été ajoutés avec succès.")
+
+def fonctionnalite_mock():
+    fonctionnalite_data = [
+        {"libelle": FONCTIONNALITE_DASHBOARD},
+        {"libelle": FONCTIONNALITE_CONFIGURATIONS},
+        {"libelle": FONCTIONNALITE_UTILISATEURS},
+        {"libelle": FONCTIONNALITE_SAISIE},
+        {"libelle": FONCTIONNALITE_TRAITEMENTS},
+        {"libelle": FONCTIONNALITE_RESULTATS},
+        {"libelle": FONCTIONNALITE_ARCHIVES},
+    ]
+
+    for diplome in fonctionnalite_data:
+        Fonctionnalite.objects.get_or_create(
+            libelle=diplome["libelle"]
+        )
+    print("Les fonctionnalite ont été ajoutés avec succès.")
 
 def eleve_mock():
     specialites = Specialite.objects.all()
@@ -389,6 +472,7 @@ def run_mock():
     coefficient_matiere_phase_mock()
     diplome_mock()
     eleve_mock()
+    fonctionnalite_mock()
 
 def main():
     run_mock()

@@ -40,22 +40,6 @@ def get_candidats_par_specialite():
 def get_coeff_par_specialite(specialite: str, est_preselction=True):
     return CoefficientMatierePhase.objects.filter(specialite=specialite, estPreselection=est_preselction)
 
-# def calculer_moyenne_eleve(notes, coeffs_matieres):
-#     if not notes:
-#         print("This eleve has not notes. Returning 0...")
-#         return 0 
-#     s = 0
-#     coeff_sum = 0
-#     for note in notes:
-#         # print("Interating through notes")
-#         for coeff_matiere in coeffs_matieres:
-#             # print("Interating through CoefficientMatierePhase")
-#             if note.matiere == coeff_matiere.matiere:
-#                 s += note.note * coeff_matiere.coefficient
-#                 coeff_sum += coeff_matiere.coefficient
-#                 break
-#     return s / coeff_sum
-
 def calculer_poids_eleve(eleve: Eleve, matieres, diploma_to_consider=BAC2_LIBELLE):
     diplomes_obtenus: list[DiplomeObtenu] = eleve.dossier.diplomes_obtenus.all()
     for diplome_obtenu in diplomes_obtenus:

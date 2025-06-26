@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.forms import ValidationError
+from .consts import *
 
 # Create your models here.
 
@@ -13,7 +14,6 @@ class Profil(models.Model):
 
     ADMIN = 'admin'
     UTILISATEUR = 'utilisateur'
-    
    
     numProfil = models.CharField(max_length=100)
     nomProfil = models.CharField(max_length=100)
@@ -27,15 +27,33 @@ class UtilisateurManager(BaseUserManager):
         if not email:
             raise ValueError("L'email est obligatoire")
         email = self.normalize_email(email)
+        profil = extra_fields.get('profil')
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save()
+
+        # Ajouter la fonctionnalité "Dashboard" si profil admin
+        if profil and hasattr(profil, 'nomProfil') and profil.nomProfil == Profil.ADMIN:
+            dashboard, _ = Fonctionnalite.objects.get_or_create(libelle="Dashboard")
+            user.fonctionnalites.add(dashboard)
+
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, password, **extra_fields)
+
+class Fonctionnalite(models.Model):
+    """
+    modèle représentant un Archive
+    """
+    id = models.AutoField(primary_key=True)
+    libelle = models.CharField(max_length=255, unique=True)
+    # code = models.Int(max_length=255)
+    
+    def __str__(self):
+        return f"Archive : {self.date}"
 
 
 class Utilisateur(AbstractBaseUser, PermissionsMixin):
@@ -47,7 +65,7 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(max_length=100)
     telephone = models.CharField(max_length=100)
     code_access = models.CharField(max_length=100,unique=True)
-
+    fonctionnalites = models.ManyToManyField(Fonctionnalite, related_name="Utilisateur")  # Many-to-Many relation
 
     objects = UtilisateurManager()
    
@@ -123,6 +141,7 @@ class Serie(models.Model):
     """
     id_serie = models.AutoField(primary_key=True)
     libelle = models.CharField(max_length=100)
+    code = models.CharField(max_length=10, null=True)
 
     def __str__(self):
         return f"{self.libelle}"
@@ -271,10 +290,10 @@ class Parametre(models.Model):
     modèle représentant un Parametre
     """
     PHASE_CHOICES = [
-        ('préalable', 'Préalable'),
-        ('préselection', 'Préselection'),
-        ('écrite', 'Écrite'),
-        ('terminé', 'Terminé'),
+        ('Préalable', 'préalable'),
+        ('Préselection', 'préselection'),
+        ('Écrite', 'écrite'),
+        ('Terminé', 'terminé'),
     ]
     id_parametre = models.AutoField(primary_key=True)
     duree_max_oisivete = models.IntegerField(null=True)
