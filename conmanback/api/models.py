@@ -32,10 +32,19 @@ class UtilisateurManager(BaseUserManager):
         user.set_password(password)
         user.save()
 
-        # Ajouter la fonctionnalité "Dashboard" si profil admin
-        if profil and hasattr(profil, 'nomProfil') and profil.nomProfil == Profil.ADMIN:
-            dashboard, _ = Fonctionnalite.objects.get_or_create(libelle="Dashboard")
-            user.fonctionnalites.add(dashboard)
+        # Attribution des fonctionnalités selon le profil
+        if profil and hasattr(profil, 'nomProfil'):
+            if profil.nomProfil == Profil.ADMIN:
+                print("Adding all fonctinnalities to the ADMIN")
+                # Admin : toutes les fonctionnalités
+                toutes_foncts = Fonctionnalite.objects.all()
+                user.fonctionnalites.set(toutes_foncts)
+            else:
+                # Autres profils : Dashboard, Configurations, Saisie
+                dash, _ = Fonctionnalite.objects.get_or_create(libelle=FONCTIONNALITE_DASHBOARD)
+                config, _ = Fonctionnalite.objects.get_or_create(libelle=FONCTIONNALITE_CONFIGURATIONS)
+                saisie, _ = Fonctionnalite.objects.get_or_create(libelle=FONCTIONNALITE_SAISIE)
+                user.fonctionnalites.set([dash, config, saisie])
 
         return user
 
@@ -46,11 +55,10 @@ class UtilisateurManager(BaseUserManager):
 
 class Fonctionnalite(models.Model):
     """
-    modèle représentant un Archive
+    modèle représentant une Fonctionnalite
     """
     id = models.AutoField(primary_key=True)
     libelle = models.CharField(max_length=255, unique=True)
-    # code = models.Int(max_length=255)
     
     def __str__(self):
         return f"Archive : {self.date}"

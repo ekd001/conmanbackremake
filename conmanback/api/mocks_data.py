@@ -380,16 +380,16 @@ def eleve_mock():
     series = Serie.objects.all()
     mentions = Mention.objects.all()
     # bac2_diplome
-    for diplome in diplomes:
-        if diplome.libelle == BAC2_LIBELLE:
-            bac2_diplome = diplome
+    # for diplome in diplomes:
+    #     if diplome.libelle == BAC2_LIBELLE:
+    #         bac2_diplome = diplome
 
 
     if not (specialites.exists() and pays.exists() and diplomes.exists() and series.exists() and mentions.exists()):
         print("Veuillez d'abord exécuter les mocks pour Specialite, Pays, Diplome, Serie et Mention.")
         return
 
-    for _ in range(300):  # Créer 10 élèves
+    for _ in range(30):  # Créer 10 élèves
         
         # Créer deux DiplomeObtenus uniques pour chaque élève
         diplome_obtenu_1 = DiplomeObtenu.objects.create(
@@ -457,6 +457,7 @@ def eleve_mock():
     # print("50 élèves ont été créés avec succès.")
 
 def run_mock():
+    fonctionnalite_mock()
     concours_mock()
     infos_generales_mock()
     profil_mock()
@@ -472,7 +473,6 @@ def run_mock():
     coefficient_matiere_phase_mock()
     diplome_mock()
     eleve_mock()
-    fonctionnalite_mock()
 
 def main():
     run_mock()

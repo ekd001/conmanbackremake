@@ -5,7 +5,7 @@ from .views import (
     CustomTokenRefreshView,CurrentUserView, ProfilViewSet,UtilisateurView,ConcoursViewSet, InfosGeneralesViewSet, SerieViewSet, MentionViewSet, PaysViewSet, DiplomeViewSet,
     CustomTokenObtainPairView, LogoutView, ChangerMotDePasseView, MatiereViewSet, NoteViewSet, DiplomeObtenuViewSet, SpecialiteViewSet,
     DossierViewSet, EleveViewSet,  ParametreViewSet, JuryViewSet, MembreJuryViewSet, CoefficientMatierePhaseViewSet, CandidatViewSet, EleveCreateView, CandidatsParSpecialiteView,
-    DeliberationView, MatiereParSpecialiteView, ExportDatabaseView, ArchivageView, CandidatNotesView, TelechargerArchiveView, CandidatSelectionneView, #export_database
+    DeliberationView, MatiereParSpecialiteView, ExportDatabaseView, ArchivageView, CandidatNotesView, TelechargerArchiveView, CandidatSelectionneView, FonctionnalitesView, #export_database
 )
 
 """
@@ -58,4 +58,5 @@ urlpatterns = [
     path('archives/', ArchivageView.as_view(), name='archives'),
     path('candidat-notes/<int:pk>/', CandidatNotesView.as_view(), name='candidat-notes'),
     path('archive/<int:pk>/', TelechargerArchiveView.as_view(), name='telecharger-archive'),
+    path('fonctionnalites/', FonctionnalitesView.as_view(), name='fonctionnalites'),
 ]

@@ -82,11 +82,15 @@ class UtilisateurSerializer(serializers.ModelSerializer):
     )
     profil_details = ProfilSerializer(source='profil', read_only=True)
 
-    fonctionnalite = serializers.PrimaryKeyRelatedField(
+    # Pour l'écriture (POST/PUT), on accepte une liste d'IDs
+    fonctionnalites = serializers.PrimaryKeyRelatedField(
         queryset=Fonctionnalite.objects.all(),
-        write_only=True
+        many=True,
+        write_only=True,
+        required=False
     )
-    fonctionnalite_details = FonctionnalitesSerializer(source='fonctionnalite', read_only=True)
+    # Pour la lecture (GET), on retourne la liste détaillée
+    fonctionnalites_details = FonctionnalitesSerializer(source='fonctionnalites', many=True, read_only=True)
 
     class Meta:
         model = Utilisateur
@@ -96,8 +100,8 @@ class UtilisateurSerializer(serializers.ModelSerializer):
             'prenom',
             'email',
             'telephone',
-            'fonctionnalite',
-            'fonctionnalite_details',
+            'fonctionnalites',         # pour POST/PUT (envoi liste d'IDs)
+            'fonctionnalites_details', # pour GET (lecture objets complets)
             'code_access',
             'password',
             'profil',          # pour POST (envoi id)

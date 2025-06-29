@@ -14,12 +14,12 @@ import subprocess
 from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUser, IsBasicUser
 from .models import (Profil,Utilisateur, Concours, InfosGenerales, Serie, Mention, Pays, Diplome, Matiere, Note, DiplomeObtenu, Specialite, 
-    Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat,)
+    Dossier, Eleve, Parametre, Jury, MembreJury, CoefficientMatierePhase, Archivage, Candidat, Fonctionnalite,)
 from .serializers import (
     ProfilSerializer,UtilisateurSerializer, ConcoursSerializer, InfosGeneralesSerializer, SerieSerializer,
     MentionSerializer, PaysSerializer, DiplomeSerializer, CustomTokenObtainPairViewSerializer, MatiereSerializer, NoteSerializer,
     DiplomeObtenuSerializer, SpecialiteSerializer, DossierSerializer, EleveSerializer,  ParametreSerializer, JurySerializer,
-    MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer, ArchivageSerializer
+    MembreJurySerializer, CoefficientMatierePhaseSerializer, CandidatSerializer, CustomEleveSerializer, ArchivageSerializer, FonctionnalitesSerializer,
     )
 from .services import get_candidats_specialite, generer_candidats, get_matiere_par_specialite, export_database, add_notes_to_candidat, deliberer_phase_ecrite
 from .consts import PHASE_ECRITE, PHASE_PREALABLE, PHASE_PRESELECTION, PHASE_TERMINE
@@ -399,6 +399,13 @@ class CandidatsParSpecialiteView(APIView):
         # Appeler la fonction pour récupérer les candidats
         candidats = get_candidats_specialite(pk)
         serializer = CandidatSerializer(candidats, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class FonctionnalitesView(APIView):
+    permissions_classes = [permissions.IsAuthenticated] # verifie qu'il est authentifié
+    def get(self, request):
+        fonctionnalites = Fonctionnalite.objects.all()
+        serializer = FonctionnalitesSerializer(fonctionnalites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CandidatSelectionneView(APIView):
