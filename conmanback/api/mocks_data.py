@@ -113,34 +113,6 @@ def pays_mock():
         {"nom_pays": "Kenya", "code_pays": "KE", "nationalite": "Kényane", "indicatif": "+254"},
     ]
 
-    # pays_data = [
-    #     {"nuPays":"4","nom_pays":"AFGHANISTAN","nationalite":"AFGHAN","code_pays":"AF","indicatif":"93"},
-    #     {"nuPays":"8","nom_pays":"ALBANIE","nationalite":"ALBANAIS","code_pays":"AL","indicatif":"355"},
-    #     {"nuPays":"10","nom_pays":"ANTARCTIQUE","nationalite":"ANTARCTIQUE","code_pays":"AQ","indicatif":"672"},
-    #     {"nuPays":"12","nom_pays":"ALGERIE","nationalite":"ALGERIEN","code_pays":"DZ","indicatif":"213"},
-    #     {"nuPays":"16","nom_pays":"SAMOA AMERICAINES","nationalite":"AMERICAIN SAMOA","code_pays":"AS","indicatif":"684"},
-    #     {"nuPays":"20","nom_pays":"ANDORRE","nationalite":"ANDORRAN","code_pays":"AD","indicatif":"376"},
-    #     {"nuPays":"24","nom_pays":"ANGOLA","nationalite":"ANGOLAIS","code_pays":"AO","indicatif":"244"},
-    #     {"nuPays":"28","nom_pays":"ANTIGUA BARBUDA","nationalite":"ANTIGUAN","code_pays":"AG","indicatif":"1"},
-    #     {"nuPays":"31","nom_pays":"AZERBAIDJAN","nationalite":"AZERI","code_pays":"AZ","indicatif":"994"},
-    #     {"nuPays":"32","nom_pays":"ARGENTINE","nationalite":"ARGENTIN","code_pays":"AR","indicatif":"54"},
-    #     {"nuPays":"36","nom_pays":"AUSTRALIE","nationalite":"AUSTRALIEN","code_pays":"AU","indicatif":"61"},
-    #     {"nuPays":"40","nom_pays":"AUTRICHE","nationalite":"AUTRICHIEN","code_pays":"AT","indicatif":"43"},
-    #     {"nuPays":"44","nom_pays":"BAHAMAS","nationalite":"BAHAMIEN","code_pays":"BS","indicatif":"1"},
-    #     {"nuPays":"48","nom_pays":"BAHREIN","nationalite":"BAHRANI","code_pays":"BH","indicatif":"973"},
-    #     {"nuPays":"50","nom_pays":"BANGLADESH","nationalite":"BANGLADESHI","code_pays":"BD","indicatif":"880"},
-    #     {"nuPays":"51","nom_pays":"ARMENIE","nationalite":"ARMENIEN","code_pays":"AM","indicatif":"374"},
-    #     {"nuPays":"52","nom_pays":"BARBADE","nationalite":"BARBADIEN","code_pays":"BB","indicatif":"1"},
-    #     {"nuPays":"56","nom_pays":"BELGIQUE","nationalite":"BELGE","code_pays":"BE","indicatif":"32"},
-    #     {"nuPays":"60","nom_pays":"BERMUDES","nationalite":"BRITANIQUE BERMUDES","code_pays":"BM","indicatif":"1"},
-    #     {"nuPays":"64","nom_pays":"BHOUTAN","nationalite":"BHOUTANIEN","code_pays":"BT","indicatif":"975"},
-    #     {"nuPays":"68","nom_pays":"BOLIVIE","nationalite":"BOLIVIEN","code_pays":"BO","indicatif":"591"},
-    #     {"nuPays":"70","nom_pays":"BOSNIE-HERZEGOVINE","nationalite":"BOSNIAQUE","code_pays":"BA","indicatif":"387"},
-    #     {"nuPays":"72","nom_pays":"BOTSWANA","nationalite":"BOTSOWANIEN","code_pays":"BW","indicatif":"267"},
-    #     {"nuPays":"74","nom_pays":"ILE BOUVET","nationalite":"NORVEGIEN","code_pays":"BV","indicatif":"55"},
-    #     {"nuPays":"76","nom_pays":"BRESIL","nationalite":"BRESILIEN","code_pays":"BR","indicatif":"55"}
-    # ]
-
     for pays in pays_data:
         Pays.objects.get_or_create(
             nom_pays=pays["nom_pays"],
@@ -151,29 +123,6 @@ def pays_mock():
     print("Les pays ont été ajoutés avec succès.")
 
 def serie_mock():
-    # series_data = [
-    #     {"libelle": "Scientifique", "code":""},
-    #     {"libelle": "Littéraire", "code":""},
-    #     {"libelle": "Économique et Social", "code":""},
-    #     {"libelle": "Technologique", "code":""},
-    #     {"libelle": "Professionnelle", "code":""},
-    #     {"libelle": "Mathématiques", "code":""},
-    #     {"libelle": "Physique-Chimie", "code":""},
-    #     {"libelle": "Biologie", "code":""},
-    #     {"libelle": "Informatique", "code":""},
-    #     {"libelle": "Génie Civil", "code":""},
-    #     {"libelle": "Génie Électrique", "code":""},
-    #     {"libelle": "Génie Mécanique", "code":""},
-    #     {"libelle": "Arts Plastiques", "code":""},
-    #     {"libelle": "Musique", "code":""},
-    #     {"libelle": "Sport", "code":""},
-    #     {"libelle": "Langues Étrangères", "code":""},
-    #     {"libelle": "Histoire-Géographie", "code":""}
-    #     {"libelle": "Philosophie", "code":""},
-    #     {"libelle": "Gestion et Comptabilité", "code":""},
-    #     {"libelle": "Marketing", "code":""},
-    # ]
-
     series_data = [
         {"code":"A1","libelle":"Lettres-mathématiques","points":"25","lstModel":"2"},
         {"code":"A2","libelle":"Lettres-langues","points":"25","lstModel":"2"},
@@ -226,13 +175,6 @@ def mention_mock():
     print("Les mentions ont été ajoutées avec succès.")
 
 def matiere_mock():
-    # matieres_data = [
-    #     {"libelle": "Mathématiques", "abreviation": "MTH"},
-    #     {"libelle": "Physiques", "abreviation": "PHY"},
-    #     {"libelle": "Français", "abreviation": "FR"},
-    #     {"libelle": "Culture Générale", "abreviation": "CG"},
-    #     {"libelle": "Anglais", "abreviation": "ANG"},
-    # ]
     matieres_data = [
         {"nuMat":"10","libelle":"Mathématiques","abreviation":"MTH","dmnsn":"null"},
         {"nuMat":"20","libelle":"Physiques","abreviation":"PHY","dmnsn":"null"},
@@ -340,8 +282,8 @@ def diplome_mock():
     diplomes_data = [
         {"libelle": "Certificat d'Etude du Premier Degré", "abreviation": "CEPD"},
         {"libelle": "Brevet d'Etude du Premier Cycle", "abreviation": "BEPC"},
-        {"libelle": "Baccalauréat Première Partie", "abreviation": "BAC 1"},
-        {"libelle": "Baccalauréat Deuxième Partie", "abreviation": "BAC 2"},
+        {"libelle": BAC1_LIBELLE, "abreviation": "BAC 1"},
+        {"libelle": BAC2_LIBELLE, "abreviation": "BAC 2"},
         {"libelle": "Brevet de Technicien Supérieur", "abreviation": "BTS"},
         {"libelle": "DUT", "abreviation": "DUT"},
         {"libelle": "Licence", "abreviation": "Licence"},
@@ -376,24 +318,26 @@ def fonctionnalite_mock():
 def eleve_mock():
     specialites = Specialite.objects.all()
     pays = Pays.objects.all()
-    diplomes = Diplome.objects.all()
+    # diplomes = Diplome.objects.all()
     series = Serie.objects.all()
     mentions = Mention.objects.all()
-    # bac2_diplome
+
+    bac2_diplome = Diplome.objects.get(libelle=BAC2_LIBELLE)
+    bac1_diplome = Diplome.objects.get(libelle=BAC1_LIBELLE)
     # for diplome in diplomes:
     #     if diplome.libelle == BAC2_LIBELLE:
     #         bac2_diplome = diplome
 
 
-    if not (specialites.exists() and pays.exists() and diplomes.exists() and series.exists() and mentions.exists()):
+    if not (specialites.exists() and pays.exists() and series.exists() and mentions.exists()):
         print("Veuillez d'abord exécuter les mocks pour Specialite, Pays, Diplome, Serie et Mention.")
         return
 
-    for _ in range(30):  # Créer 10 élèves
+    for _ in range(100):  # Créer 10 élèves
         
         # Créer deux DiplomeObtenus uniques pour chaque élève
         diplome_obtenu_1 = DiplomeObtenu.objects.create(
-            diplome=choice(diplomes),
+            diplome=bac1_diplome,
             serie=choice(series),
             pays=choice(pays),
             mention=choice(mentions),
@@ -405,7 +349,7 @@ def eleve_mock():
         )
 
         diplome_obtenu_2 = DiplomeObtenu.objects.create(
-            diplome=choice(diplomes),
+            diplome=bac2_diplome,
             serie=diplome_obtenu_1.serie if randint(0, 10) else choice(series),
             pays=diplome_obtenu_1.pays if randint(0, 10) else choice(pays),
             mention=choice(mentions),

@@ -14,7 +14,7 @@ from datetime import date
 from api.consts import BAC1_LIBELLE, BAC2_LIBELLE, PHASE_PRESELECTION
 from datetime import datetime
 import subprocess
-from random import randint, choice
+from random import randint
 
 def get_eleves_par_specialite():
     specialites = Specialite.objects.all()
